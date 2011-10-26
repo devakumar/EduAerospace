@@ -9,12 +9,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>893</width>
+    <width>824</width>
     <height>600</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -41,229 +41,48 @@
    <set>QMainWindow::AllowTabbedDocks|QMainWindow::AnimatedDocks</set>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>881</width>
-      <height>501</height>
-     </rect>
-    </property>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QDockWidget" name="Input_Dock">
-       <property name="enabled">
-        <bool>true</bool>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>230</width>
-         <height>524287</height>
-        </size>
-       </property>
-       <property name="autoFillBackground">
-        <bool>false</bool>
-       </property>
-       <property name="inputMethodHints">
-        <set>Qt::ImhNone</set>
-       </property>
-       <property name="floating">
-        <bool>false</bool>
-       </property>
-       <property name="features">
-        <set>QDockWidget::AllDockWidgetFeatures</set>
-       </property>
-       <property name="allowedAreas">
-        <set>Qt::NoDockWidgetArea</set>
-       </property>
-       <property name="windowTitle">
-        <string>Input</string>
-       </property>
-       <widget class="QWidget" name="dockWidgetContents_3">
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>310</y>
-           <width>221</width>
-           <height>159</height>
-          </rect>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <item>
-             <widget class="QRadioButton" name="radioButton_Source">
-              <property name="text">
-               <string>&amp;Source</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_Sink">
-              <property name="text">
-               <string>S&amp;ink</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_Doublet">
-              <property name="text">
-               <string>&amp;Doublet</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_3">
-            <item>
-             <widget class="QRadioButton" name="radioButton_Vortex">
-              <property name="text">
-               <string>&amp;Vortex</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="radioButton_Unifoem">
-              <property name="text">
-               <string>&amp;Uniform flow</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label_X">
-                <property name="text">
-                 <string>X:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>lineEdit_X</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBox_X">
-                <property name="minimum">
-                 <double>-1000.000000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_9">
-              <item>
-               <widget class="QLabel" name="label_Y">
-                <property name="text">
-                 <string>Y:</string>
-                </property>
-                <property name="buddy">
-                 <cstring>lineEdit_X_2</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QDoubleSpinBox" name="doubleSpinBox_Y">
-                <property name="minimum">
-                 <double>-1000.000000000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>1000.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_10">
-            <item>
-             <widget class="QLabel" name="label_Strength">
-              <property name="text">
-               <string>Strength</string>
-              </property>
-              <property name="buddy">
-               <cstring>doubleSpinBox_Strength</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_Strength">
-              <property name="minimum">
-               <double>-10000.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>10000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_12">
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_5">
-              <property name="text">
-               <string>&amp;Clear</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton">
-              <property name="text">
-               <string>&amp;Add</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-        <widget class="QWidget" name="layoutWidget">
-         <property name="geometry">
-          <rect>
-           <x>0</x>
-           <y>0</y>
-           <width>271</width>
-           <height>301</height>
-          </rect>
-         </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_Main">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetMaximumSize</enum>
+      </property>
+      <item>
+       <widget class="QDockWidget" name="Input_Dock">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>524287</height>
+         </size>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="inputMethodHints">
+         <set>Qt::ImhNone</set>
+        </property>
+        <property name="floating">
+         <bool>false</bool>
+        </property>
+        <property name="features">
+         <set>QDockWidget::AllDockWidgetFeatures</set>
+        </property>
+        <property name="allowedAreas">
+         <set>Qt::NoDockWidgetArea</set>
+        </property>
+        <property name="windowTitle">
+         <string>Input</string>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents_3">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
            <widget class="QTableWidget" name="tableWidget_potentialShow">
@@ -273,6 +92,12 @@
               <height>0</height>
              </size>
             </property>
+            <property name="rowCount">
+             <number>0</number>
+            </property>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>20</number>
+            </attribute>
             <column>
              <property name="text">
               <string>Tag</string>
@@ -320,9 +145,9 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_11">
+           <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
-             <widget class="QPushButton" name="pushButton_RemoveEntry">
+             <widget class="QPushButton" name="pushButton_Remove">
               <property name="enabled">
                <bool>false</bool>
               </property>
@@ -332,17 +157,27 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_ChangeEntry">
+             <widget class="QPushButton" name="pushButton_Edit">
               <property name="enabled">
                <bool>false</bool>
               </property>
               <property name="text">
-               <string>&amp;Change</string>
+               <string>&amp;Edit</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_PotentialRun">
+             <widget class="QPushButton" name="pushButton_toggleSimulation">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>&amp;Play</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_Simulate">
               <property name="text">
                <string>&amp;Simulate</string>
               </property>
@@ -358,32 +193,218 @@
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>18</height>
+              <height>40</height>
              </size>
             </property>
            </spacer>
           </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QRadioButton" name="radioButton_Source">
+                <property name="text">
+                 <string>&amp;Source</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_Sink">
+                <property name="text">
+                 <string>S&amp;ink</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_Doublet">
+                <property name="text">
+                 <string>&amp;Doublet</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QRadioButton" name="radioButton_Vortex">
+                <property name="text">
+                 <string>&amp;Vortex</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radioButton_UniformFlow">
+                <property name="text">
+                 <string>&amp;Uniform flow</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_8">
+                <item>
+                 <widget class="QLabel" name="label_X">
+                  <property name="text">
+                   <string>X:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>lineEdit_X</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_X">
+                  <property name="minimum">
+                   <double>-1000.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>1000.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.100000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_9">
+                <item>
+                 <widget class="QLabel" name="label_Y">
+                  <property name="text">
+                   <string>Y:</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>lineEdit_X_2</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_Y">
+                  <property name="minimum">
+                   <double>-1000.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>1000.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.100000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <widget class="QLabel" name="label_FlowAngle">
+                <property name="text">
+                 <string>&amp;Flow angle</string>
+                </property>
+                <property name="buddy">
+                 <cstring>doubleSpinBox_Strength</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_FlowAngle">
+                <property name="minimum">
+                 <double>-360.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>360.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>1.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_10">
+              <item>
+               <widget class="QLabel" name="label_Strength">
+                <property name="text">
+                 <string>Strength</string>
+                </property>
+                <property name="buddy">
+                 <cstring>doubleSpinBox_Strength</cstring>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QDoubleSpinBox" name="doubleSpinBox_Strength">
+                <property name="minimum">
+                 <double>-10000.000000000000000</double>
+                </property>
+                <property name="maximum">
+                 <double>10000.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_12">
+              <item>
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_Clear">
+                <property name="text">
+                 <string>&amp;Clear</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_Add">
+                <property name="text">
+                 <string>&amp;Add</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </widget>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGraphicsView" name="graphicsView_Main">
-       <property name="inputMethodHints">
-        <set>Qt::ImhFormattedNumbersOnly</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>893</width>
+     <width>824</width>
      <height>25</height>
     </rect>
    </property>
@@ -471,6 +492,19 @@
    </property>
   </action>
  </widget>
+ <tabstops>
+  <tabstop>tableWidget_potentialShow</tabstop>
+  <tabstop>radioButton_Source</tabstop>
+  <tabstop>radioButton_Sink</tabstop>
+  <tabstop>radioButton_Doublet</tabstop>
+  <tabstop>radioButton_Vortex</tabstop>
+  <tabstop>radioButton_UniformFlow</tabstop>
+  <tabstop>doubleSpinBox_X</tabstop>
+  <tabstop>doubleSpinBox_Y</tabstop>
+  <tabstop>doubleSpinBox_Strength</tabstop>
+  <tabstop>pushButton_Clear</tabstop>
+  <tabstop>pushButton_Add</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

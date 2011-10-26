@@ -1,6 +1,7 @@
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg \
 		import FigureCanvasQTAgg as FigureCanvas
+from pylab import zeros
 
 class Plot(FigureCanvas):
 	""" used in plotting the details in GUI provided """
@@ -9,22 +10,27 @@ class Plot(FigureCanvas):
 		self.fig = Figure()
 		self.item = self.fig.add_subplot(111)
 		FigureCanvas.__init__(self, self.fig)
-		self.item.set_xlim(-1.0, 1.0)
-		self.item.set_ylim(-1.0, 1.0)
+		self.defalutRange = [-5.0, 5.0, -5.0, 5.0]
+		self.item.axis(self.defalutRange)
 		self.item.grid(True)
-		self.item.set_autoscale_on(True)
+		self.item.set_autoscale_on(False)
 		self.xMaxReached = False
-		self.timerEvent(None)
 
-	def plotPoint(self, elementInfo):
+	def plotPotElements(self, potElements):
 		""" """
-		if elementInfo['type'] != 'uniformFlow' :
-			self.item.plot(elementInfo['pos'].real, elementInfo['pos'].imag, self.colors[elementInfo['type']])
-			self.fig.canvas.draw()
+		for element in potElements:
+			if element.elementInfo['type'] != 'uniformFlow' :
+				self.item.plot(element.elementInfo['pos'].real, element.elementInfo['pos'].imag, self.colors[element.elementInfo['type']])
+				self.fig.canvas.draw()
 
-	def simulate(self, xdata, ydata):
-		""" """
-		pass
+	def plotStreakParticles(self, particles):
+		""" Initializing the plot of streak particles """
+		self.plots = list(zeros(len(particles)))
+		for index in range(0, len(particles)):
+			xValues = [pos.real for pos in particles[index].history]
+			yValues = [pos.imag for pos in particles[index].history]
+			self.plots[index], = self.item.plot(xValues, yValues)
+		self.fig.canvas.draw()
 
 	def getlims(self, data):
 		""" Returns the extreme points of the data """
