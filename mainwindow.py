@@ -127,30 +127,14 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if (self.plotType == 'streakLines') and (self.potLibrary.elements != []) :
 			self.pushButton_toggleSimulation.setEnabled(True)
 			self.pushButton_toggleSimulation.setText("&Pause")
-			self.potStreakParticles = []
 			# Clear the figure window here. Only the plotted elements
-			self.graphicWidget.item.hold(False)
+			self.graphicWidget.show()
 			self.graphicWidget.plotPotElements(self.potLibrary.elements)
 			self.potResizeGraphicWindow()
 			self.graphicWidget.fig.canvas.draw()
-			startX = self.axisRange[0] + 1
-			widthY = abs(self.axisRange[3] - self.axisRange[2])
-			elementsWidth = abs(self.potElemRange[3] - self.potElemRange[2])
-			if widthY > self.potMinStreakParticles :
-				noParticles = int(widthY)
-			else :
-				noParticles = int(self.potMinStreakParticles)
-			for yCoord in linspace(self.axisRange[2] + 0.5 , self.potElemRange[2] - elementsWidth/3, noParticles/4) :
-				newParticle = particle(startX, yCoord)
-				self.potStreakParticles.append(newParticle)
-			for yCoord in linspace(self.potElemRange[2] - elementsWidth/3.0 -1.0, self.potElemRange[3] + elementsWidth/3.0 + 1.0, noParticles/2) :
-				newParticle = particle(startX, yCoord)
-				self.potStreakParticles.append(newParticle)
-			for yCoord in linspace(self.potElemRange[3] + elementsWidth/3.0, self.axisRange[3] - 0.5, noParticles/4) :
-				newParticle = particle(startX, yCoord)
-				self.potStreakParticles.append(newParticle)
-
-			self.graphicWidget.plotStreakParticles(self.potStreakParticles)
+			self.potStreakParticles = []
+			self.potAddStreakParticles()
+			
 			self.count = 0
 			self.timerEvent(None)
 			self.timer = self.startTimer(0.001)
@@ -201,6 +185,30 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		else :
 			self.timer = self.startTimer(1)
 			self.pushButton_toggleSimulation.setText("&Pause")
+
+	def potAddStreakParticles(self):
+		""" Add specified streal particles """
+		self.potAddParticlesAtX( self.axisRange[0])
+
+	def potAddParticlesAtX(self, startX, n = 30):
+		""" Adds particles at x """
+		widthY = abs(self.axisRange[3] - self.axisRange[2])
+		elementsWidth = abs(self.potElemRange[3] - self.potElemRange[2])
+		if widthY > self.potMinStreakParticles :
+			noParticles = int(widthY)
+		else :
+			noParticles = int(self.potMinStreakParticles)
+		for yCoord in linspace(self.axisRange[2] + 0.5 , self.potElemRange[2] - elementsWidth/3, noParticles/4) :
+			newParticle = particle(startX, yCoord)
+			self.potStreakParticles.append(newParticle)
+		for yCoord in linspace(self.potElemRange[2] - elementsWidth/3.0 -1.0, self.potElemRange[3] + elementsWidth/3.0 + 1.0, noParticles/2) :
+			newParticle = particle(startX, yCoord)
+			self.potStreakParticles.append(newParticle)
+		for yCoord in linspace(self.potElemRange[3] + elementsWidth/3.0, self.axisRange[3] - 0.5, noParticles/4) :
+			newParticle = particle(startX, yCoord)
+			self.potStreakParticles.append(newParticle)
+
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 
 
 if __name__ == "__main__":
