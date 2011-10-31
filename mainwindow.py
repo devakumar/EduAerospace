@@ -129,7 +129,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.pushButton_toggleSimulation.setText("&Pause")
 			self.potStreakParticles = []
 			# Clear the figure window here. Only the plotted elements
-			# self.graphicWidget.item.clear()
+			self.graphicWidget.item.hold(False)
 			self.graphicWidget.plotPotElements(self.potLibrary.elements)
 			self.potResizeGraphicWindow()
 			self.graphicWidget.fig.canvas.draw()
@@ -167,6 +167,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 		elif self.potElemRange == None :
 			self.potElemRange = [-1.0, 1.0, -1.0, 1.0]
+			self.graphicWidget.item.axis(array(self.graphicWidget.defalutRange))
 
 	def timerEvent(self, event):
 		""" Supposed to update the plot """

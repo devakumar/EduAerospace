@@ -20,7 +20,9 @@ class Plot(FigureCanvas):
 		""" """
 		for element in potElements:
 			if element.elementInfo['type'] != 'uniformFlow' :
+				self.item.grid(True)
 				self.item.plot(element.elementInfo['pos'].real, element.elementInfo['pos'].imag, self.colors[element.elementInfo['type']])
+				self.item.hold(True)
 				self.fig.canvas.draw()
 
 	def plotStreakParticles(self, particles):

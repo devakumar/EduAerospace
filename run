@@ -1,3 +1,0 @@
-#!/bin/bash
-pyuic4 ui/mainwindow.ui > ui/ui_mainwindow.py
-python mainwindow.py
