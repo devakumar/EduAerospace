@@ -85,63 +85,43 @@
         <widget class="QWidget" name="dockWidgetContents_3">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QTableWidget" name="tableWidget_potentialShow">
-            <property name="minimumSize">
-             <size>
-              <width>221</width>
-              <height>0</height>
-             </size>
+           <widget class="QTreeWidget" name="treeWidget_potElements">
+            <property name="tabKeyNavigation">
+             <bool>true</bool>
             </property>
-            <property name="rowCount">
-             <number>0</number>
+            <property name="alternatingRowColors">
+             <bool>true</bool>
             </property>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>20</number>
-            </attribute>
             <column>
              <property name="text">
-              <string>Tag</string>
-             </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+              <string>Added Elements</string>
              </property>
             </column>
-            <column>
+            <item>
              <property name="text">
-              <string>X</string>
+              <string>Doublets</string>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-            </column>
-            <column>
+            </item>
+            <item>
              <property name="text">
-              <string>Y</string>
+              <string>Sinks</string>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-            </column>
-            <column>
+            </item>
+            <item>
              <property name="text">
-              <string>Strength</string>
+              <string>Sources</string>
              </property>
-             <property name="font">
-              <font>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
+            </item>
+            <item>
+             <property name="text">
+              <string>Uniformflow</string>
              </property>
-            </column>
+            </item>
+            <item>
+             <property name="text">
+              <string>Vortices</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item>
@@ -493,7 +473,6 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>tableWidget_potentialShow</tabstop>
   <tabstop>radioButton_Source</tabstop>
   <tabstop>radioButton_Sink</tabstop>
   <tabstop>radioButton_Doublet</tabstop>

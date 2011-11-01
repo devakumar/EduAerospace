@@ -82,10 +82,8 @@ class potentialLibrary(object):
 		newElement = potElement(elementInfo)
 		self.elements.append(newElement)
 
-	def deleteElement(self, elementInfo):
-		for element in self.elements:
-			if self.elementInfo == elementInfo :
-				self.elements.remove(element)
+	def deleteElement(self, element):
+		self.elements.remove(element)
 
 	def getSourceList(self):
 		return [element for element in self.elements if element._Type == 'source']

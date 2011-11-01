@@ -33,9 +33,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potMinStreakParticles = 28
 		self.potStreakParticles = []
 		self.timer = None
+		self.elementTreeItemDict = {}
 
 		# Potential flow related connections
-		QObject.connect(self.pushButton_Add, SIGNAL("clicked()"), self.addPotElement)
+		QObject.connect(self.pushButton_Add, SIGNAL("clicked()"), self.potaddElement)
+		QObject.connect(self.pushButton_Remove, SIGNAL("clicked()"), self.potRemoveElement)
 		QObject.connect(self.pushButton_Clear, SIGNAL("clicked()"), self.potClearData)
 		QObject.connect(self.pushButton_Simulate, SIGNAL("clicked()"), self.potSimulate)
 		QObject.connect(self.pushButton_toggleSimulation, SIGNAL("clicked()"), self.toggleSimulation)
@@ -60,30 +62,65 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.axisRange = array(self.graphicWidget.item.axis())
 
 	# Potential flow related SLOTS		
-	def addPotElement(self):
+	def potaddElement(self):
 		""" SLOT for add action in  GUI """
 		self.elementInfo = {}
-		self.elementInfo['pos'] = self.doubleSpinBox_X.value() + 1j*self.doubleSpinBox_Y.value()
+		X = self.doubleSpinBox_X.value()
+		Y = self.doubleSpinBox_Y.value()
+		self.elementInfo['pos'] =  X + 1j*Y
 		self.elementInfo['strength'] = self.doubleSpinBox_Strength.value()
-		if self.radioButton_Source.isChecked():
-			self.elementInfo['type'] = 'source'
+		if self.radioButton_Doublet.isChecked():
+			self.elementInfo['type'] = 'doublet'
+			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
+					"@ (" + str(X) + ", " + str(Y) +")"], 0)
+			self.treeWidget_potElements.topLevelItem(0).addChild(self.treeWidgetItem)
 		elif self.radioButton_Sink.isChecked():
 			self.elementInfo['type'] = 'sink'
+			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
+					"@ (" + str(X) + ", " + str(Y) +")"], 1)
+			self.treeWidget_potElements.topLevelItem(1).addChild(self.treeWidgetItem)
 			self.elementInfo['strength'] = -1*self.elementInfo['strength']
-		elif self.radioButton_Doublet.isChecked():
-			self.elementInfo['type'] = 'doublet'
-		elif self.radioButton_Vortex.isChecked():
-			self.elementInfo['type'] = 'vortex'
+		elif self.radioButton_Source.isChecked():
+			self.elementInfo['type'] = 'source'
+			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
+					"@ (" + str(X) + ", " + str(Y) +")"], 2)
+			self.treeWidget_potElements.topLevelItem(2).addChild(self.treeWidgetItem)
 		elif self.radioButton_UniformFlow.isChecked():
 			self.elementInfo['type'] = 'uniformFlow'
 			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle.value()
+			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
+					"@ " + str(self.elementInfo['angle']) + "deg"], 3)
+			self.treeWidget_potElements.topLevelItem(3).addChild(self.treeWidgetItem)
+		elif self.radioButton_Vortex.isChecked():
+			self.elementInfo['type'] = 'vortex'
+			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
+					"@ (" + str(X) + ", " + str(Y) +")"], 4)
+			self.treeWidget_potElements.topLevelItem(4).addChild(self.treeWidgetItem)
 		else :
 			# Pop up box here - Select an element of potential flow
 			pass
 
 		self.potLibrary.addElement(self.elementInfo)
+		# Plot the addes element in the figure widget
 		self.graphicWidget.plotPotElements([self.potLibrary.elements[-1]])
 		self.potResizeGraphicWindow()
+		# Add this treeElement and potElement to the dictionary
+		self.elementTreeItemDict[self.treeWidgetItem] = self.potLibrary.elements[-1]
+		self.pushButton_Remove.setEnabled(True)
+
+	def potRemoveElement(self):
+		""" Remove selected item in the tree widgte """
+		selected = self.treeWidget_potElements.selectedItems()
+		if self.elementTreeItemDict.has_key(selected[0]):
+			self.potLibrary.deleteElement(self.elementTreeItemDict[selected[0]])
+			del self.elementTreeItemDict[selected[0]]
+			# self.treeWidget_potElements.topLevelItem(0).removeChild(self.treeWidget_potElements.topLevelItem(0).child(1))
+			# Need to clear the plot before plotting
+			self.graphicWidget.plotPotElements(self.potLibrary.elements)
+			self.graphicWidget.show()
+			self.graphicWidget.fig.canvas.draw()
+			# The following thing is not working - Check why. However the element from the library is deleted
+			self.treeWidget_potElements.removeItemWidget(selected[0], 0)
 
 	def potClearData(self):
 		""" Clears the values in DoubleSpinBoxes and sets them to default
