@@ -1,6 +1,7 @@
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg \
 		import FigureCanvasQTAgg as FigureCanvas
+from PyQt4.QtGui import *
 from pylab import zeros
 
 class Plot(FigureCanvas):
@@ -14,7 +15,9 @@ class Plot(FigureCanvas):
 		self.item.axis(self.defalutRange)
 		self.item.grid(True)
 		self.item.set_autoscale_on(False)
-		self.xMaxReached = False
+		FigureCanvas.setSizePolicy(self, QSizePolicy.Expanding,
+				QSizePolicy.Expanding)
+		FigureCanvas.updateGeometry(self)
 
 	def plotPotElements(self, potElements):
 		""" """
@@ -31,6 +34,10 @@ class Plot(FigureCanvas):
 			yValues = [pos.imag for pos in particles[index].history]
 			self.plots[index], = self.item.plot(xValues, yValues)
 		self.fig.canvas.draw()
+	
+	def clearStreakParticles(self):
+		""" Clear the plots corresponding to streak particles """
+		pass
 
 	def getlims(self, data):
 		""" Returns the extreme points of the data """

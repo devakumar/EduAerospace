@@ -4,6 +4,8 @@ import platform
 import sys
 import re
 from pylab import linspace
+from matplotlib.backends.backend_qt4agg \
+		import NavigationToolbar2QTAgg as NavigationToolbar
 # PyQt4 libraries
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -44,9 +46,16 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.radioButton_UniformFlow, SIGNAL("clicked()"), self.potUniformFlowSelected)
 		QObject.connect(self.radioButton_UniformFlow, SIGNAL("clicked()"), self.horizontalLayout_7.invalidate)
 		if self.scope == 'potentialFlows' :
+			# The following will set the input widget accordingly
 			self.potSetVisible(not self.radioButton_UniformFlow.isChecked())
+			# Following block will set window for visulaization. A matplotlib Figure window
 			self.graphicWidget = Plot()
-			self.horizontalLayout_Main.addWidget(self.graphicWidget)
+			self.graphicWidget.setParent(self)
+			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
+			self.verticalLayout = QVBoxLayout()
+			self.verticalLayout.addWidget(self.graphicWidget)
+			self.verticalLayout.addWidget(self.navigationTollBar)
+			self.horizontalLayout_Main.addLayout(self.verticalLayout)
 			self.graphicWidget.show()
 			self.axisRange = array(self.graphicWidget.item.axis())
 
@@ -124,20 +133,22 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potSimulate(self):
 		""" SLOT for simulate button click """
+		self.graphicWidget.plotPotElements(self.potLibrary.elements)
+		self.graphicWidget.show()
+		self.graphicWidget.fig.canvas.draw()
+		self.pushButton_toggleSimulation.setEnabled(True)
+		self.pushButton_toggleSimulation.setText("&Pause")
+		if self.potStreakParticles != []:
+			self.graphicWidget.clearStreakParticles()
 		if (self.plotType == 'streakLines') and (self.potLibrary.elements != []) :
-			self.pushButton_toggleSimulation.setEnabled(True)
-			self.pushButton_toggleSimulation.setText("&Pause")
-			# Clear the figure window here. Only the plotted elements
-			self.graphicWidget.show()
-			self.graphicWidget.plotPotElements(self.potLibrary.elements)
-			self.potResizeGraphicWindow()
-			self.graphicWidget.fig.canvas.draw()
 			self.potStreakParticles = []
 			self.potAddStreakParticles()
 			
-			self.count = 0
-			self.timerEvent(None)
-			self.timer = self.startTimer(0.001)
+		self.count = 0
+		self.timerEvent(None)
+		if self.timer != None :
+			self.killTimer(self.timer)
+		self.timer = self.startTimer(0.001)
 
 	def potResizeGraphicWindow(self):
 		""" Resizes the plot widget based on the present elements """
@@ -183,7 +194,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.timer = None
 			self.pushButton_toggleSimulation.setText("&Play")
 		else :
-			self.timer = self.startTimer(1)
+			self.timer = self.startTimer(0.001)
 			self.pushButton_toggleSimulation.setText("&Pause")
 
 	def potAddStreakParticles(self):
