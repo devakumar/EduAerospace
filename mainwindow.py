@@ -154,29 +154,28 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potSetVisible(False)
 		self.doubleSpinBox_Strength.setRange(self.potStrengthRange[0], self.potStrengthRange[1])
 
-	def potSetVisible(self, normal):
-		""" Normal corresponds to all elements except uniform flow. 'normal' is a
-		boolean, True if it doesnt correspond to Uniform flow"""
-		self.label_X.setHidden(not normal)
-		self.doubleSpinBox_X.setHidden(not normal)
-		self.label_Y.setHidden(not normal)
-		self.doubleSpinBox_Y.setHidden(not normal)
-		self.label_FlowAngle.setHidden(normal)
-		self.doubleSpinBox_FlowAngle.setHidden(normal)
-		if normal:
+	def potSetVisible(self, isUniform):
+		""" """
+		self.label_X.setHidden(not isUniform)
+		self.doubleSpinBox_X.setHidden(not isUniform)
+		self.label_Y.setHidden(not isUniform)
+		self.doubleSpinBox_Y.setHidden(not isUniform)
+		self.label_FlowAngle.setHidden(isUniform)
+		self.doubleSpinBox_FlowAngle.setHidden(isUniform)
+		if isUniform:
 			self.label_Strength.setText("Strength")
 		else :
 			self.label_Strength.setText("Velocity")
 
 	def potSimulate(self):
 		""" SLOT for simulate button click """
+		self.clearPlot()
 		self.graphicWidget.plotPotElements(self.potLibrary.elements)
-		self.graphicWidget.show()
 		self.graphicWidget.fig.canvas.draw()
 		self.pushButton_toggleSimulation.setEnabled(True)
 		self.pushButton_toggleSimulation.setText("&Pause")
 		if self.potStreakParticles != []:
-			self.graphicWidget.clearStreakParticles()
+			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
 		if (self.plotType == 'streakLines') and (self.potLibrary.elements != []) :
 			self.potStreakParticles = []
 			self.potAddStreakParticles()
@@ -257,6 +256,12 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.potStreakParticles.append(newParticle)
 
 		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
+	
+	def clearPlot(self):
+		"""  """
+		self.graphicWidget.item.cla()
+		self.graphicWidget.item.set_autoscale_on(False)
+		self.graphicWidget.item.grid(True)
 
 
 if __name__ == "__main__":
