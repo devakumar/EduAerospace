@@ -50,9 +50,23 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
 
 		if self.scope == 'potentialFlows' :
+			self.InputPotentialFlows_Dock.setHidden(False)
+			self.InputCFD_Dock.setHidden(True)
 			# The following will set the input widget accordingly
 			self.potSetVisible(not self.radioButton_UniformFlow.isChecked())
 			# Following block will set window for visulaization. A matplotlib Figure window
+			self.graphicWidget = Plot()
+			self.graphicWidget.setParent(self)
+			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
+			self.verticalLayout = QVBoxLayout()
+			self.verticalLayout.addWidget(self.graphicWidget)
+			self.verticalLayout.addWidget(self.navigationTollBar)
+			self.horizontalLayout_Main.addLayout(self.verticalLayout)
+			self.graphicWidget.show()
+			self.axisRange = array(self.graphicWidget.item.axis())
+		elif self.scope == 'cfd' :
+			self.InputCFD_Dock.setHidden(False)
+			self.InputPotentialFlows_Dock.setHidden(True)
 			self.graphicWidget = Plot()
 			self.graphicWidget.setParent(self)
 			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
