@@ -48,7 +48,14 @@
        <enum>QLayout::SetMaximumSize</enum>
       </property>
       <item>
-       <widget class="QDockWidget" name="Input_Dock">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>GroupBox</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDockWidget" name="Input_Dock_2">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -87,6 +94,183 @@
         </property>
         <property name="windowTitle">
          <string>Potential flows</string>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents_4">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_14">
+            <item>
+             <widget class="QLabel" name="label_X_3">
+              <property name="text">
+               <string>CFL:</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_X</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_CFL_1">
+              <property name="decimals">
+               <number>2</number>
+              </property>
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>100000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.100000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_13">
+            <item>
+             <widget class="QLabel" name="label_X_2">
+              <property name="text">
+               <string>Number Of Cells:</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_X</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_cellNum_1">
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000000000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>100.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_15">
+            <item>
+             <widget class="QLabel" name="label_X_4">
+              <property name="text">
+               <string>Length</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_X</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_Length_2">
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000000000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_16">
+            <item>
+             <widget class="QLabel" name="label_X_5">
+              <property name="text">
+               <string>Diagphram Position</string>
+              </property>
+              <property name="buddy">
+               <cstring>lineEdit_X</cstring>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="doubleSpinBox_diphrmPostn">
+              <property name="minimum">
+               <double>0.000000000000000</double>
+              </property>
+              <property name="maximum">
+               <double>1000000000.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>1.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDockWidget" name="Dock_potentialFlows">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>524287</height>
+         </size>
+        </property>
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+        <property name="inputMethodHints">
+         <set>Qt::ImhNone</set>
+        </property>
+        <property name="floating">
+         <bool>false</bool>
+        </property>
+        <property name="features">
+         <set>QDockWidget::AllDockWidgetFeatures</set>
+        </property>
+        <property name="allowedAreas">
+         <set>Qt::NoDockWidgetArea</set>
+        </property>
+        <property name="windowTitle">
+         <string>Input</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents_3">
          <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -826,7 +1010,7 @@
   <connection>
    <sender>actionCFD</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -842,7 +1026,7 @@
   <connection>
    <sender>actionCFD</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -858,7 +1042,7 @@
   <connection>
    <sender>action_Potential_Flows</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -874,7 +1058,7 @@
   <connection>
    <sender>action_Potential_Flows</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -890,7 +1074,7 @@
   <connection>
    <sender>actionPanel_Methods</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -906,7 +1090,7 @@
   <connection>
    <sender>actionPanel_Methods</sender>
    <signal>activated()</signal>
-   <receiver>Input_Dock</receiver>
+   <receiver>Dock_potentialFlows</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
