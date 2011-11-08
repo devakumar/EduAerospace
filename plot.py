@@ -42,3 +42,6 @@ class Plot(FigureCanvas):
 	def getlims(self, data):
 		""" Returns the extreme points of the data """
 		pass
+	""" CFD Function declarations """
+	def cfdPlot(self ):
+		pass
