@@ -1,4 +1,4 @@
-from math import sin, cos, pi
+from math import sin, cos, pi, atan2
 from numpy import exp, array
 
 class particle(object):
@@ -38,9 +38,11 @@ class potElement(object):
 		# Numerical tolerance values - Distance after or below which numerical
 		# singularities are to be treated explicitly. APPROXIMATION
 		if (self._Type == 'source') or (self._Type == 'sink'):
-			self.__tolerance = 0.05
+			self.__tolerance = 0.5
 		elif self._Type == 'doublet':
-			self.__tolerance = 0.006
+			self.__tolerance = 0.5
+		elif self._Type == 'vortex':
+			self.__tolerance = 0.5
 		else :
 			self.__tolerance = 0.0
 
@@ -48,20 +50,29 @@ class potElement(object):
 		if self._Type == 'uniformFlow':
 			return self.strength*exp(1j*self.flowAngle)
 		elif (self._Type == 'source') or (self._Type == 'sink'):
+			theta = atan2(pos.imag - self.pos.imag, pos.real - self.pos.real)
 			if abs(pos - self.pos) <= self.__tolerance :
-				return 0.0
+				r = abs(pos - self.pos)
+				return self.strength*r*exp(1j*theta)/self.__tolerance
 			else :
-				return self.strength*((pos.real - self.pos.real) + 1j*(pos.imag - self.pos.imag))/abs(pos - self.pos)**2
+				return self.strength*( pos - self.pos)/abs(pos - self.pos)**2
 		elif self._Type == 'doublet':
 			x = pos.real - self.pos.real
 			y = pos.imag - self.pos.imag
 			r = abs(pos - self.pos)
-			return self.strength*(x**2 - y**2 +1j*2*x*y)/(2.0*pi*r**4)
+			if ( ((cmp(self.strength, 0) and cmp(pos.real, self.pos.real)) or \
+					(cmp(0, self.strength) and cmp(self.pos.real, pos.real))) and (r < self.__tolerance)) :
+				return self.strength*pow(r, 2.0)*((pow(x, 2.0) - pow(y, 2.0)) + 1j*2.0*x*y)/pow(self.__tolerance, 2.0)
+			else :
+				return self.strength*(x**2 - y**2 +1j*2*x*y)/(2.0*pi*r**4)
 		elif self._Type == 'vortex':
 			if abs (pos - self.pos) > 1e-4 :
-				return -1j*self.strength/(2.0*pi*(pos - self.pos))
-			else:
-				return 0.0 + 0.0j
+				temp = -1j*self.strength/(2.0*pi*(pos - self.pos))
+				return temp.real -1j*temp.imag
+			else :
+				theta = atan2(pos.imag - self.pos.imag, pos.real - self.pos.real)
+				temp = -1j*self.strength*exp(1j*theta)/(2.0*pi*self.__tolerance)
+				return temp.real -1j*temp.imag
 		else :
 			raise NameError('element type', self._Type, 'unknown')
 

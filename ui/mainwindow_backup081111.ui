@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1071</width>
-    <height>662</height>
+    <width>830</width>
+    <height>649</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,14 +48,7 @@
        <enum>QLayout::SetMaximumSize</enum>
       </property>
       <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>GroupBox</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDockWidget" name="Input_Dock_2">
+       <widget class="QDockWidget" name="Input_Dock">
         <property name="enabled">
          <bool>true</bool>
         </property>
@@ -68,7 +61,7 @@
         <property name="minimumSize">
          <size>
           <width>400</width>
-          <height>423</height>
+          <height>418</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -95,190 +88,10 @@
         <property name="windowTitle">
          <string>Potential flows</string>
         </property>
-        <widget class="QWidget" name="dockWidgetContents_4">
-         <layout class="QVBoxLayout" name="verticalLayout_4">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_14">
-            <item>
-             <widget class="QLabel" name="label_X_3">
-              <property name="text">
-               <string>CFL:</string>
-              </property>
-              <property name="buddy">
-               <cstring>lineEdit_X</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_CFL_1">
-              <property name="decimals">
-               <number>2</number>
-              </property>
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>100000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.100000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_13">
-            <item>
-             <widget class="QLabel" name="label_X_2">
-              <property name="text">
-               <string>Number Of Cells:</string>
-              </property>
-              <property name="buddy">
-               <cstring>lineEdit_X</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_cellNum_1">
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1000000000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>10.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>100.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_15">
-            <item>
-             <widget class="QLabel" name="label_X_4">
-              <property name="text">
-               <string>Length</string>
-              </property>
-              <property name="buddy">
-               <cstring>lineEdit_X</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_Length_2">
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1000000000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_16">
-            <item>
-             <widget class="QLabel" name="label_X_5">
-              <property name="text">
-               <string>Diagphram Position</string>
-              </property>
-              <property name="buddy">
-               <cstring>lineEdit_X</cstring>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_diphrmPostn">
-              <property name="minimum">
-               <double>0.000000000000000</double>
-              </property>
-              <property name="maximum">
-               <double>1000000000.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer name="verticalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-      <item>
-       <widget class="QDockWidget" name="Dock_potentialFlows">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>400</width>
-          <height>524287</height>
-         </size>
-        </property>
-        <property name="autoFillBackground">
-         <bool>false</bool>
-        </property>
-        <property name="inputMethodHints">
-         <set>Qt::ImhNone</set>
-        </property>
-        <property name="floating">
-         <bool>false</bool>
-        </property>
-        <property name="features">
-         <set>QDockWidget::AllDockWidgetFeatures</set>
-        </property>
-        <property name="allowedAreas">
-         <set>Qt::NoDockWidgetArea</set>
-        </property>
-        <property name="windowTitle">
-         <string>Input</string>
-        </property>
         <widget class="QWidget" name="dockWidgetContents_3">
          <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <widget class="QTabWidget" name="tabWidget_potInput">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
+           <widget class="QTabWidget" name="tabWidget">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -291,17 +104,8 @@
               <height>16777215</height>
              </size>
             </property>
-            <property name="tabPosition">
-             <enum>QTabWidget::North</enum>
-            </property>
-            <property name="tabShape">
-             <enum>QTabWidget::Rounded</enum>
-            </property>
             <property name="currentIndex">
              <number>0</number>
-            </property>
-            <property name="tabsClosable">
-             <bool>false</bool>
             </property>
             <widget class="QWidget" name="tab_potInput">
              <attribute name="title">
@@ -601,264 +405,6 @@
              <attribute name="title">
               <string>Output Control</string>
              </attribute>
-             <widget class="QFrame" name="frame_patchInput">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>50</y>
-                <width>331</width>
-                <height>131</height>
-               </rect>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::StyledPanel</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <widget class="QWidget" name="layoutWidget">
-               <property name="geometry">
-                <rect>
-                 <x>10</x>
-                 <y>10</y>
-                 <width>311</width>
-                 <height>99</height>
-                </rect>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_4">
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_3">
-                  <item>
-                   <widget class="QComboBox" name="comboBox_pathLines">
-                    <item>
-                     <property name="text">
-                      <string>Square</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Circular</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Rectangular</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Line at X</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Line at Y</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Elliptical</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Parabolic</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>Hyperbolic</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_5">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout">
-                  <item>
-                   <spacer name="horizontalSpacer_7">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_center">
-                    <property name="text">
-                     <string>Center</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="doubleSpinBox_centerX"/>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="doubleSpinBox_centerY"/>
-                  </item>
-                 </layout>
-                </item>
-                <item>
-                 <layout class="QHBoxLayout" name="horizontalLayout_2">
-                  <item>
-                   <spacer name="horizontalSpacer_8">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                     <enum>QSizePolicy::Fixed</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>20</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_patchInfo1">
-                    <property name="text">
-                     <string>At X</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>doubleSpinBox_patchInfo1</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_3">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="doubleSpinBox_patchInfo1"/>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_2">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QLabel" name="label_patchInfo2">
-                    <property name="text">
-                     <string>At Y</string>
-                    </property>
-                    <property name="buddy">
-                     <cstring>doubleSpinBox_patchInfo2</cstring>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <spacer name="horizontalSpacer_4">
-                    <property name="orientation">
-                     <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeHint" stdset="0">
-                     <size>
-                      <width>40</width>
-                      <height>20</height>
-                     </size>
-                    </property>
-                   </spacer>
-                  </item>
-                  <item>
-                   <widget class="QDoubleSpinBox" name="doubleSpinBox_patchInfo2"/>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
-              </widget>
-             </widget>
-             <widget class="QWidget" name="layoutWidget">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>10</y>
-                <width>311</width>
-                <height>51</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_7">
-               <item>
-                <widget class="QRadioButton" name="radioButton_PathLines">
-                 <property name="text">
-                  <string>&amp;Path lines</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_StreamLines">
-                 <property name="enabled">
-                  <bool>true</bool>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Stream lines</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
             </widget>
            </widget>
           </item>
@@ -875,7 +421,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1071</width>
+     <width>830</width>
      <height>25</height>
     </rect>
    </property>
@@ -964,6 +510,7 @@
   </action>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>radioButton_Source</tabstop>
   <tabstop>radioButton_Sink</tabstop>
   <tabstop>radioButton_Doublet</tabstop>
@@ -980,14 +527,6 @@
   <tabstop>pushButton_Remove</tabstop>
   <tabstop>pushButton_Edit</tabstop>
   <tabstop>treeWidget_potElements</tabstop>
-  <tabstop>tabWidget_potInput</tabstop>
-  <tabstop>radioButton_PathLines</tabstop>
-  <tabstop>radioButton_StreamLines</tabstop>
-  <tabstop>comboBox_pathLines</tabstop>
-  <tabstop>doubleSpinBox_centerX</tabstop>
-  <tabstop>doubleSpinBox_centerY</tabstop>
-  <tabstop>doubleSpinBox_patchInfo1</tabstop>
-  <tabstop>doubleSpinBox_patchInfo2</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1010,7 +549,7 @@
   <connection>
    <sender>actionCFD</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1026,7 +565,7 @@
   <connection>
    <sender>actionCFD</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1042,7 +581,7 @@
   <connection>
    <sender>action_Potential_Flows</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1058,7 +597,7 @@
   <connection>
    <sender>action_Potential_Flows</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1074,7 +613,7 @@
   <connection>
    <sender>actionPanel_Methods</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>show()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1090,7 +629,7 @@
   <connection>
    <sender>actionPanel_Methods</sender>
    <signal>activated()</signal>
-   <receiver>Dock_potentialFlows</receiver>
+   <receiver>Input_Dock</receiver>
    <slot>setFocus()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -1100,38 +639,6 @@
     <hint type="destinationlabel">
      <x>125</x>
      <y>318</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButton_PathLines</sender>
-   <signal>clicked()</signal>
-   <receiver>frame_patchInput</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>585</x>
-     <y>130</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>531</x>
-     <y>226</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioButton_StreamLines</sender>
-   <signal>clicked()</signal>
-   <receiver>frame_patchInput</receiver>
-   <slot>hide()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>425</x>
-     <y>130</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>531</x>
-     <y>226</y>
     </hint>
    </hints>
   </connection>
