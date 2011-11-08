@@ -28,7 +28,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		# Potential flow variable declarations
 		self.potLibrary = potentialLibrary()
 		self.potStrengthRange = [-10000.0, 10000.0]
-		self.plotType = 'streakLines'
+		self.plotType = 'pathLines'
 		self.potElemRange = None
 		self.potMinStreakParticles = 28
 		self.potStreakParticles = []
@@ -45,8 +45,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.radioButton_Sink, SIGNAL("clicked()"), self.potSinkSelected)
 		QObject.connect(self.radioButton_Doublet, SIGNAL("clicked()"), self.potDoubletSelected)
 		QObject.connect(self.radioButton_Vortex, SIGNAL("clicked()"), self.potVortexSelected)
-		QObject.connect(self.radioButton_UniformFlow, SIGNAL("clicked()"), self.potUniformFlowSelected)
-		QObject.connect(self.radioButton_UniformFlow, SIGNAL("clicked()"), self.horizontalLayout_7.invalidate)
+		QObject.connect(self.radioButton_StreamLines, SIGNAL("clicked()"), self.potSetPlotScope)
+		QObject.connect(self.radioButton_PathLines, SIGNAL("clicked()"), self.potSetPlotScope)
+		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
+
 		if self.scope == 'potentialFlows' :
 			# The following will set the input widget accordingly
 			self.potSetVisible(not self.radioButton_UniformFlow.isChecked())
@@ -107,6 +109,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		# Add this treeElement and potElement to the dictionary
 		self.elementTreeItemDict[self.treeWidgetItem] = self.potLibrary.elements[-1]
 		self.pushButton_Remove.setEnabled(True)
+		self.graphicWidget.fig.canvas.draw()
 
 	def potRemoveElement(self):
 		""" Remove selected item in the tree widgte """
@@ -176,7 +179,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.pushButton_toggleSimulation.setText("&Pause")
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
-		if (self.plotType == 'streakLines') and (self.potLibrary.elements != []) :
+		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
 			self.potStreakParticles = []
 			self.potAddStreakParticles()
 			
@@ -220,7 +223,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		""" Treat the particles if they are close to any singularity """
 		for streakParticle in self.potStreakParticles :
 			for sink in self.potLibrary.sinks :
-				if abs(streakParticle.pos - sink.pos) < sink.__tolerance :
+				if abs(streakParticle.pos - sink.pos) < sink.__tolerance/02.0 :
 					streakParticle.pos = sink.pos
 	
 	def toggleSimulation(self):
@@ -258,10 +261,52 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 	
 	def clearPlot(self):
-		"""  """
+		"""  Clears the plot window without changing the axis limits """
 		self.graphicWidget.item.cla()
 		self.graphicWidget.item.set_autoscale_on(False)
 		self.graphicWidget.item.grid(True)
+
+	def potSetPlotScope(self):
+		""" Sets plot type and displays required input properties for that scope """
+		if (self.radioButton_StreamLines.isChecked()):
+			self.plotType = 'streamLines'
+		elif (self.radioButton_PathLines.isChecked()):
+			self.plotType = 'pathLines'
+		else :
+			pass
+
+	def potSetPatchInputParameters(self):
+		""" Sets corresponding input parameters for the patch of selected type"""
+		patchType = self.comboBox_pathLines.currentText()
+		if patchType == 'Square':
+			self.label_center.setHidden(False)
+			self.doubleSpinBox_centerX.setHidden(False)
+			self.doubleSpinBox_centerY.setHidden(False)
+			self.label_patchInfo1.setHidden(False)
+			self.doubleSpinBox_patchInfo1.setHidden(False)
+			self.label_patchInfo2.setHidden(True)
+			self.doubleSpinBox_patchInfo2.setHidden(True)
+			self.label_patchInfo1.setText("length")
+		elif patchType == 'Circular':
+			self.label_center.setHidden(False)
+			self.doubleSpinBox_centerX.setHidden(False)
+			self.doubleSpinBox_centerY.setHidden(False)
+			self.label_patchInfo1.setHidden(False)
+			self.doubleSpinBox_patchInfo1.setHidden(False)
+			self.label_patchInfo2.setHidden(True)
+			self.doubleSpinBox_patchInfo2.setHidden(True)
+			self.label_patchInfo1.setText("Radius")
+		elif patchType == 'Line at X':
+			self.label_center.setHidden(True)
+			self.doubleSpinBox_centerX.setHidden(True)
+			self.doubleSpinBox_centerY.setHidden(True)
+			self.label_patchInfo1.setHidden(False)
+			self.doubleSpinBox_patchInfo1.setHidden(False)
+			self.label_patchInfo2.setHidden(True)
+			self.doubleSpinBox_patchInfo2.setHidden(True)
+			self.label_patchInfo1.setText("At X ")
+		else :
+			pass
 
 
 if __name__ == "__main__":
