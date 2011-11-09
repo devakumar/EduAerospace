@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/mainwindow.ui'
+# Form implementation generated from reading ui file 'mainwindow.ui'
 #
-# Created: Tue Nov  8 14:19:55 2011
+# Created: Tue Nov  8 23:32:56 2011
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -194,7 +194,7 @@ class Ui_MainWindow(object):
         self.frame_patchInput.setFrameShadow(QtGui.QFrame.Raised)
         self.frame_patchInput.setObjectName("frame_patchInput")
         self.layoutWidget = QtGui.QWidget(self.frame_patchInput)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 311, 99))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 311, 101))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_4 = QtGui.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_4.setObjectName("verticalLayout_4")
@@ -359,8 +359,13 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_cfdcellNum.setObjectName("doubleSpinBox_cfdcellNum")
         self.horizontalLayout_22.addWidget(self.doubleSpinBox_cfdcellNum)
         self.verticalLayout_7.addLayout(self.horizontalLayout_22)
-        spacerItem9 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.pushButton_cfdSimulate = QtGui.QPushButton(self.tab_potInput_2)
+        self.pushButton_cfdSimulate.setObjectName("pushButton_cfdSimulate")
+        self.verticalLayout_7.addWidget(self.pushButton_cfdSimulate)
+        spacerItem9 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
         self.verticalLayout_7.addItem(spacerItem9)
+        spacerItem10 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
+        self.verticalLayout_7.addItem(spacerItem10)
         self.tabWidget_cfdInput.addTab(self.tab_potInput_2, "")
         self.tab_potOutputControl_2 = QtGui.QWidget()
         self.tab_potOutputControl_2.setObjectName("tab_potOutputControl_2")
@@ -511,6 +516,7 @@ class Ui_MainWindow(object):
         self.label_cfdLength.setText(QtGui.QApplication.translate("MainWindow", "Length", None, QtGui.QApplication.UnicodeUTF8))
         self.label_cfdDiaphramPosition.setText(QtGui.QApplication.translate("MainWindow", "Diagphram Position", None, QtGui.QApplication.UnicodeUTF8))
         self.label_cfdNoOfCells.setText(QtGui.QApplication.translate("MainWindow", "Number Of Cells:", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButton_cfdSimulate.setText(QtGui.QApplication.translate("MainWindow", "Run", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_cfdInput.setTabText(self.tabWidget_cfdInput.indexOf(self.tab_potInput_2), QtGui.QApplication.translate("MainWindow", "Input", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget_cfdInput.setTabText(self.tabWidget_cfdInput.indexOf(self.tab_potOutputControl_2), QtGui.QApplication.translate("MainWindow", "Output Control", None, QtGui.QApplication.UnicodeUTF8))
         self.menu_File.setTitle(QtGui.QApplication.translate("MainWindow", "&File", None, QtGui.QApplication.UnicodeUTF8))

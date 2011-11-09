@@ -50,6 +50,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.radioButton_StreamLines, SIGNAL("clicked()"), self.potSetPlotScope)
 		QObject.connect(self.radioButton_PathLines, SIGNAL("clicked()"), self.potSetPlotScope)
 		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
+		QObject.connect(self.pushButton_cfdSimulate, SIGNAL("clicked()"), self.cfdSimulate)
 
 		if self.scope == 'potentialFlows' :
 			self.InputPotentialFlows_Dock.setHidden(False)
@@ -350,6 +351,25 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.fig.canvas.draw()
 		self.statusbar.clearMessage()
 		self.statusbar.showMessage("Done", 2000)
+
+	""" CFD declarations """
+	def cfdSimulate(self):
+		self.cfdInput()
+		lst=[0.5,0.5,self.Input['cfl'],self.Input['Length'],self.Input['DiphrmPostn'],self.Input['cellNum'] ]
+		self.graphicWidget.item.plot(lst,'or')
+		self.graphicWidget.item.set_autoscale_on(True)
+		self.graphicWidget.fig.canvas.draw()
+
+	def cfdInput(self):
+		cfl = self.doubleSpinBox_CFL.value()
+		cfdLength = self.doubleSpinBox_cfdLength.value()
+		cfdDiphrmPostn = self.doubleSpinBox_cfdDiphrmPostn.value()
+		cfdcellNum = self.doubleSpinBox_cfdcellNum.value()
+		self.Input={}
+		self.Input['cfl']=cfl
+		self.Input['Length']=cfdLength
+		self.Input['DiphrmPostn']=cfdDiphrmPostn
+		self.Input['cellNum']=cfdcellNum
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
