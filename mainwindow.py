@@ -6,6 +6,7 @@ import re
 from pylab import linspace
 from matplotlib.backends.backend_qt4agg \
 		import NavigationToolbar2QTAgg as NavigationToolbar
+from matplotlib.patches import FancyArrowPatch
 # PyQt4 libraries
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -44,6 +45,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.radioButton_Source, SIGNAL("clicked()"), self.potSourceSelected)
 		QObject.connect(self.radioButton_Sink, SIGNAL("clicked()"), self.potSinkSelected)
 		QObject.connect(self.radioButton_Doublet, SIGNAL("clicked()"), self.potDoubletSelected)
+		QObject.connect(self.radioButton_UniformFlow, SIGNAL("clicked()"), self.potUniformFlowSelected)
 		QObject.connect(self.radioButton_Vortex, SIGNAL("clicked()"), self.potVortexSelected)
 		QObject.connect(self.radioButton_StreamLines, SIGNAL("clicked()"), self.potSetPlotScope)
 		QObject.connect(self.radioButton_PathLines, SIGNAL("clicked()"), self.potSetPlotScope)
@@ -196,12 +198,17 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
 			self.potStreakParticles = []
 			self.potAddStreakParticles()
-			
-		self.count = 0
-		self.timerEvent(None)
-		if self.timer != None :
-			self.killTimer(self.timer)
-		self.timer = self.startTimer(0.001)
+			self.count = 0
+			self.timerEvent(None)
+			if self.timer != None :
+				self.killTimer(self.timer)
+			self.timer = self.startTimer(0.001)
+
+		elif (self.plotType == 'streamLines') and (self.potLibrary.elements != []):
+			if self.timer != None :
+				self.killTimer(self.timer)
+			self.statusbar.showMessage("Plotting the stream lines. This may take some time...", 10000)
+			self.potPlotStreamLines()
 
 	def potResizeGraphicWindow(self):
 		""" Resizes the plot widget based on the present elements """
@@ -219,25 +226,30 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def timerEvent(self, event):
 		""" Supposed to update the plot """
-		for streak in self.potStreakParticles :
-			streak.velocity = self.potLibrary.velocityAt(streak.pos)
-			self.potSingularitiesTreatment()
-			streak.advect()
-		for index in range(0, len(self.potStreakParticles)):
-			xData = [pos.real for pos in self.potStreakParticles[index].history]
-			yData = [pos.imag for pos in self.potStreakParticles[index].history]
-			self.graphicWidget.plots[index].set_data(xData, yData)
+		self.potAdvectParticles(dt = 0.01)
+		if self.graphicWidget.plots != None :
+			for index in range(0, len(self.potStreakParticles)):
+				xData = [pos.real for pos in self.potStreakParticles[index].history]
+				yData = [pos.imag for pos in self.potStreakParticles[index].history]
+				self.graphicWidget.plots[index].set_data(xData, yData)
 		self.graphicWidget.fig.canvas.draw()
 		if self.count < 0:
 			self.killTimer(self.timer)
 		else :
 			self.count += 1
 
+	def potAdvectParticles(self, dt = 0.01):
+		""" Advect the particles for a given time step """
+		for streak in self.potStreakParticles :
+			streak.velocity = self.potLibrary.velocityAt(streak.pos)
+			self.potSingularitiesTreatment()
+			streak.advect(dt)
+		
 	def potSingularitiesTreatment(self):
 		""" Treat the particles if they are close to any singularity """
 		for streakParticle in self.potStreakParticles :
 			for sink in self.potLibrary.sinks :
-				if abs(streakParticle.pos - sink.pos) < sink.__tolerance/02.0 :
+				if abs(streakParticle.pos - sink.pos) < sink.__tolerance/5.0 :
 					streakParticle.pos = sink.pos
 	
 	def toggleSimulation(self):
@@ -253,6 +265,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 	def potAddStreakParticles(self):
 		""" Add specified streal particles """
 		self.potAddParticlesAtX( self.axisRange[0])
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 
 	def potAddParticlesAtX(self, startX, n = 30):
 		""" Adds particles at x """
@@ -271,8 +284,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		for yCoord in linspace(self.potElemRange[3] + elementsWidth/3.0, self.axisRange[3] - 0.5, noParticles/4) :
 			newParticle = particle(startX, yCoord)
 			self.potStreakParticles.append(newParticle)
-
-		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 	
 	def clearPlot(self):
 		"""  Clears the plot window without changing the axis limits """
@@ -322,6 +333,23 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		else :
 			pass
 
+	def potPlotStreamLines(self):
+		""" Takes the dimwentions of plot widget and plots stream lines by
+		advecting the particles for a small time step dt """
+		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*3
+		noOfParticlesAtY = int(self.axisRange[1] - self.axisRange[0])*2
+		self.potStreakParticles = [particle(x, y) for x in linspace(self.axisRange[1], self.axisRange[0], \
+				noOfParticlesAtY) for y in linspace(self.axisRange[2]+0.1, self.axisRange[3]-0.1, noOfParticlesAtX)]
+		self.graphicWidget.item.grid(False)
+		for steps in range(1):
+			self.potAdvectParticles(dt = 0.02)
+			for index in range(0, len(self.potStreakParticles)):
+				positions = [(pos.real, pos.imag) for pos in self.potStreakParticles[index].history]
+				axis = self.graphicWidget.fig.gca()
+				axis.add_patch(FancyArrowPatch(positions[0],positions[-1],arrowstyle='->',mutation_scale=15))
+		self.graphicWidget.fig.canvas.draw()
+		self.statusbar.clearMessage()
+		self.statusbar.showMessage("Done", 2000)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
