@@ -13,6 +13,7 @@ from PyQt4.QtCore import *
 from potentialLibrary import *
 from plot import *
 from ui import ui_mainwindow
+from cfdSolver import *
 
 __version__ = "1.0.0"
 
@@ -326,22 +327,56 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 	""" CFD declarations """
 	def cfdSimulate(self):
 		self.cfdInput()
-		lst=[0.5,0.5,self.Input['cfl'],self.Input['Length'],self.Input['DiphrmPostn'],self.Input['cellNum'] ]
+		lst=[0.5,0.5,self.Input['cfl'],self.Input['length'],self.Input['diphrmPostn'],self.Input['numCells'] ]
 		self.graphicWidget.item.plot(lst,'or')
 		self.graphicWidget.item.set_autoscale_on(True)
 		self.graphicWidget.fig.canvas.draw()
+		self.cfdSolver = cfdSolver(self.Input)
+		self.cfdSolver.main()
+
 
 	def cfdInput(self):
 		cfl = self.doubleSpinBox_CFL.value()
 		cfdLength = self.doubleSpinBox_cfdLength.value()
 		cfdDiphrmPostn = self.doubleSpinBox_cfdDiphrmPostn.value()
 		cfdcellNum = self.doubleSpinBox_cfdcellNum.value()
+		
+		rho_l = self.doubleSpinBox_cfdrhoL.value()
+		u_l = self.doubleSpinBox_cfduL.value()
+		p_l = self.doubleSpinBox_cfdpresL.value()
+		rho_r = self.doubleSpinBox_cfdrhoR.value()
+		u_r = self.doubleSpinBox_cfduR.value()
+		p_r = self.doubleSpinBox_cfdpresR.value()
+		
+		minfsq = self.doubleSpinBox_cfdminfsq.value()
+		ku = self.doubleSpinBox_cfdku.value()
+		kp = self.doubleSpinBox_cfdkp.value()
+		sigma = self.doubleSpinBox_cfdsigma.value()
+		beta = self.doubleSpinBox_cfdbeta.value()
+		alpha = self.doubleSpinBox_cfdalpha.value()
+
+		cfdcellNum = self.doubleSpinBox_cfdcellNum.value()
 		self.Input={}
 		self.Input['cfl']=cfl
-		self.Input['Length']=cfdLength
-		self.Input['DiphrmPostn']=cfdDiphrmPostn
-		self.Input['cellNum']=cfdcellNum
+		self.Input['length']=cfdLength
+		self.Input['diphrmPostn']=cfdDiphrmPostn
+		self.Input['numCells']=cfdcellNum
+		
+		self.Input['minfsq']=minfsq
+		self.Input['ku']=ku
+		self.Input['kp']=kp 
+		self.Input['sigma']=sigma
+		self.Input['beta']=beta
+		self.Input['alpha']=alpha
+		
+		self.Input['rho_l']=rho_l
+		self.Input['u_l']=u_l
+		self.Input['p_l']=p_l
+		self.Input['rho_r']=rho_r
+		self.Input['u_r']=u_r
+		self.Input['p_r']=p_r
 
+		
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
 	application = MainWindow()
