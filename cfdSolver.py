@@ -1,5 +1,5 @@
 import math 
-import numpy 
+import numpy
 #import schemes 
 from matplotlib.pylab import * 
 gamma=1.4
@@ -70,7 +70,8 @@ class cfdSolver(object):
 		self.rho_r = statesInfo['rho_r']
 		self.u_r = statesInfo['u_r']
 		self.p_r = statesInfo['p_r']
-		
+		self.gamma= statesInfo['gamma']
+
 		self.netflux=numpy.zeros((self.numCells+2,3))
 		self.U   =  numpy.zeros((self.numCells+2,3))
 		self.fi   =  numpy.zeros((self.numCells+2,3))
@@ -78,6 +79,8 @@ class cfdSolver(object):
 		self.dx = self.length/self.numCells
 		self.dt=1.0
 		self.t=0.0
+		self.ei=0.0000001
+
 		pass
 
 	def grid(self):
@@ -85,7 +88,7 @@ class cfdSolver(object):
 		self.dx = self.length/self.numCells
 		i=0
 		while i<= (self.numCells +1):
-			x[i] =(   (i*dx)-( dx/2.0)   )
+			self.x[i] =(   (i*self.dx)-( self.dx/2.0)   )
 			#print i,"  "
 			i=i+1
 
@@ -123,36 +126,37 @@ class cfdSolver(object):
 	def update(self):
 		i=1
 		while i<=self.numCells:
-			U[i][0] = U[i][0] + dt/dx*(netflux[i][0])
-			U[i][1] = U[i][1] + dt/dx*(netflux[i][1])
-			U[i][2] = U[i][2] + dt/dx*(netflux[i][2])
+			self.U[i][0] = self.U[i][0] + self.dt/self.dx*(self.netflux[i][0])
+			self.U[i][1] = self.U[i][1] + self.dt/self.dx*(self.netflux[i][1])
+			self.U[i][2] = self.U[i][2] + self.dt/self.dx*(self.netflux[i][2])
 			i=i+1
 
 	def maxofu(self):
 		tempumax=0
 		i=0
 		while i<= (self.numCells+1 ):
-			self.ri = U[i][0]
-			self.ui = (U[i][1])/ri
-			self.pi = ((U[i][2]-(0.5*ui*ui*ri))*(gamma-1))
+			self.ri = self.U[i][0]
+			self.ui = (self.U[i][1])/self.ri
+			self.pi = ((self.U[i][2]-(0.5*self.ui*self.ui*self.ri))*(self.gamma-1))
 			#print pi ,"  ", ri,"  ", gamma
 			if (self.gamma*self.pi/self.ri ) <= 0:
 				ai   =math.sqrt(	math.fabs( (self.gamma*self.pi)/self.ri )    )
 				print " There is a sqrt error for Sound Velcity  at time ",t," for position",x[i]," as pressure ",pi," and density ",ri
 			else :
-				ai   =math.sqrt(	( (gamma*pi)/ri )    )
-			if(tempumax <math.fabs( (ui+ai)) ):
-				tempumax=math.fabs( (ui+ai)  )
-			if(tempumax <math.fabs(ui)   )	:
-				tempumax=math.fabs(ui)
-			if(tempumax <math.fabs( (ui-ai))):
-				tempumax=math.fabs(  (ui-ai)  )
+				ai   =math.sqrt(	( (self.gamma*self.pi)/self.ri )    )
+			if(tempumax <math.fabs( (self.ui+ai)) ):
+				tempumax=math.fabs( (self.ui+ai)  )
+			if(tempumax <math.fabs(self.ui)   )	:
+				tempumax=math.fabs(self.ui)
+			if(tempumax <math.fabs( (self.ui-ai))):
+				tempumax=math.fabs(  (self.ui-ai)  )
 			i=i+1
 		return tempumax
 	def flux(self):
 		i=0
+		self.schemes = schemes()
 		while i<=self.numCells:
-			fi[i]= schemes.vanleer(U[i],U[i+1] )
+			self.fi[i]= self.schemes.vanleer(Ui=self.U[i],Ui1=self.U[i+1] )
 			#print "  vanleer: ", fi[i],
 			#print U[i]," ",U[i+1]," ",fi[i]
 			#fi[i]= schemes.stegerwarming(U[i],U[i+1] )
@@ -162,9 +166,9 @@ class cfdSolver(object):
 		#print " ",fi
 		i=1
 		while i<=self.numCells:
-			netflux[i][0]= fi[i-1][0]-fi[i][0]
-			netflux[i][1]= fi[i-1][1]-fi[i][1]
-			netflux[i][2]= fi[i-1][2]-fi[i][2]
+			self.netflux[i][0]= self.fi[i-1][0]-self.fi[i][0]
+			self.netflux[i][1]= self.fi[i-1][1]-self.fi[i][1]
+			self.netflux[i][2]= self.fi[i-1][2]-self.fi[i][2]
 			i=i+1
 		#print " Calc",netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
 	def output(self):	
@@ -212,36 +216,54 @@ class cfdSolver(object):
 		#figure(2)
 		plot(x[1:self.numCells],pi[1:self.numCells])
 		show()
+	def plt(self):
+		#figure(1)
+		#plot(self.x[1:self.numCells],self.ri[1:self.numCells])
+		##show()
+		#figure(2)
+		#plot(self.x[1:self.numCells],self.pi[1:self.numCells])
+		#show()
+		pass
+	def read_data(self):
+		pass
 
 	def main(self):
 		print "COMing In"
-		read_data()
-		grid()
-		initialisation()
-		boundaryCondtn()
+		self.read_data()
+		self.grid()
+#		print " ri ",self.ri, " PI ",pi, " ui",ui
+		self.initialisation()
+		self.boundaryCondtn()
 		#pltoutpt()
-		t =0.0
-		itr=0
+		self.t =0.0
+		self.itr=0
+#		print self.x
+#		print "t ",self.t,"itr",self.itr
+#		print " ri ",self.ri,
+#		print " PI ",pi, " ui",ui
 		#while(t<self.tf):
-		while(itr<self.itrf):
-			flux()
-			umax = maxofu()
+		while(self.itr<self.itrf):
+			self.flux()
+			umax = self.maxofu()
 			self.dt=  1.0 *self.cfl* self.dx/umax
-			update()
-			boundaryCondtn()
-			itr=itr+1
+			self.update()
+			print " ri ",self.ri,
+			self.boundaryCondtn()
+			self.itr=self.itr+1
 			self.t=self.t+self.dt
-			plt()
 
+			self.plt()
+			print "t ",self.t,"itr",self.itr
 			#print "DTIMe", dt
 			#print "For itr ",itr," The time is",t," and dt is",dt
 			#print U[49][0],"  ",U[49][1],"  ",U[49][2]," \t ",U[50][0]," ",U[50][1]," ",U[50][2],"\t ",U[51][0]," ",U[51][1]," ",U[51][2]
 			#print netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
 
-		print " Time Final", t
-		output()
-		pltoutpt()
-		print " Time Final", t
+		print " Time Final", self.t
+		#self.output()
+		print " x ",self.x," ri ",self.ri,
+		self.plt()
+		print " Time Final", self.t
 #	main()
 
 
@@ -254,7 +276,9 @@ class schemes(object):
 		self.sigma=statesInfo['sigma']
 		self.beta=statesInfo['beta']
 		self.alpha = statesInfo['alpha']	
-	def vanleer(Ui,Ui1):
+		self.ei= 0.0000001
+		self.e = 0.0000001
+	def vanleer(self,Ui,Ui1):
 		#print "vanleer"
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
@@ -272,7 +296,7 @@ class schemes(object):
 		ai1  = math.sqrt((gamma*pi1)/ri1 )   
 		mi1  = ui1/ai1
 
-		if( (math.fabs(mi) ) < (1+ ei ) ) :
+		if( (math.fabs(mi) ) < (1+ self.ei ) ) :
 			#	print "(math.fabs(mi) ) < (1+ e )",
 			fpi[0] = float((ai*ri)*(0.25*(mi+1)*(mi+1)) )
 			#print " fpi[0]= ",fpi[0], "(ai*ri)*(0.25*(mi+1)*(mi+1))" ,float((ai*ri)*(0.25*(mi+1)*(mi+1)))
@@ -292,8 +316,8 @@ class schemes(object):
 			fpi[1]= 0.0
 			fpi[2]= 0.0
 
-		if( (math.fabs(mi1) ) < (1+ ei ) ) :
-			#	print "(math.fabs(mi1) ) < (1+ e ) ",
+		if( (math.fabs(mi1) ) < (1+ self.ei ) ) :
+			#	print "(math.fabs(mi1) ) < (1+ self.e ) ",
 			#fni1[0]= mi1* ri1 * ai1
 			#fni1[1]=  ai1* ai1*ri1*(mi1 *mi1 + (1/gamma) ) 
 			#fni1[2]= ri1* ai1* ai1* ai1 *mi1 *(.5 *mi1 *mi1+ (    1 /(gamma - 1)  ) )
@@ -333,7 +357,7 @@ class schemes(object):
 
 		#print " "," fi[0]=",fi[0]," "," fi[1]=",fi[1]," "," fi[2]=",fi[2]
 		return fi 
-	def stegerwarming(Ui,Ui1):
+	def stegerwarming(self,Ui,Ui1):
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
 		fi   = numpy.array([0.0,0.0,0.0])

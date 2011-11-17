@@ -24,7 +24,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.filename = None
 		self.setupUi(self)
 		self.setCentralWidget(self.centralwidget)
-		self.scope = 'potentialFlows'
+		#self.scope = 'potentialFlows'
+		self.scope = 'cfd'
 
 		# Potential flow variable declarations
 		self.potLibrary = potentialLibrary()
@@ -326,15 +327,30 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	""" CFD declarations """
 	def cfdSimulate(self):
+		self.clearPlot()
 		self.cfdInput()
-		lst=[0.5,0.5,self.Input['cfl'],self.Input['length'],self.Input['diphrmPostn'],self.Input['numCells'] ]
-		self.graphicWidget.item.plot(lst,'or')
+		lst=[0.5,0.5,self.cfdInput['cfl'],self.cfdInput['length'],self.cfdInput['diphrmPostn'],self.cfdInput['numCells'] ]
+		#self.graphicWidget.item.plot(lst,'or')
 		self.graphicWidget.item.set_autoscale_on(True)
 		self.graphicWidget.fig.canvas.draw()
-		self.cfdSolver = cfdSolver(self.Input)
+		self.cfdSolver = cfdSolver(self.cfdInput)
 		self.cfdSolver.main()
-
-
+#		self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.ri,'r')
+		temp1rho=[]
+		temp2ui=[]
+		temp3pi=[]
+		xplt=[]
+		for i in range(int(self.cfdInput['numCells']) ):
+			xplt.append(self.cfdSolver.x[i] ) 
+			temp1= self.cfdSolver.U[i][0]
+			temp1rho.append(temp1)
+			temp2 =(self.cfdSolver.U[i][1])/temp1
+			temp2ui.append(temp2 )
+			temp3pi.append( ((self.cfdSolver.U[i][2]-(0.5*temp2*temp2*temp1))*(self.cfdInput['gamma']-1))  )
+		self.graphicWidget.item.plot(xplt,temp1rho,'r')
+		self.graphicWidget.item.plot(xplt,temp2ui,'g')
+		self.graphicWidget.item.plot(xplt,temp3pi,'b')
+		self.graphicWidget.item.set_xlim(0,self.cfdInput['length'])
 	def cfdInput(self):
 		cfl = self.doubleSpinBox_CFL.value()
 		cfdLength = self.doubleSpinBox_cfdLength.value()
@@ -354,28 +370,34 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		sigma = self.doubleSpinBox_cfdsigma.value()
 		beta = self.doubleSpinBox_cfdbeta.value()
 		alpha = self.doubleSpinBox_cfdalpha.value()
-
+		tf = self.doubleSpinBox_cfdtf.value()
+		itrf = self.doubleSpinBox_cfditrf.value()
 		cfdcellNum = self.doubleSpinBox_cfdcellNum.value()
-		self.Input={}
-		self.Input['cfl']=cfl
-		self.Input['length']=cfdLength
-		self.Input['diphrmPostn']=cfdDiphrmPostn
-		self.Input['numCells']=cfdcellNum
+		gamma = self.doubleSpinBox_cfdgamma.value()
 		
-		self.Input['minfsq']=minfsq
-		self.Input['ku']=ku
-		self.Input['kp']=kp 
-		self.Input['sigma']=sigma
-		self.Input['beta']=beta
-		self.Input['alpha']=alpha
+		self.cfdInput={}
+		self.cfdInput['cfl']=cfl
+		self.cfdInput['length']=cfdLength
+		self.cfdInput['diphrmPostn']=cfdDiphrmPostn
+		self.cfdInput['numCells']=cfdcellNum
 		
-		self.Input['rho_l']=rho_l
-		self.Input['u_l']=u_l
-		self.Input['p_l']=p_l
-		self.Input['rho_r']=rho_r
-		self.Input['u_r']=u_r
-		self.Input['p_r']=p_r
+		self.cfdInput['minfsq']=minfsq
+		self.cfdInput['ku']=ku
+		self.cfdInput['kp']=kp 
+		self.cfdInput['sigma']=sigma
+		self.cfdInput['beta']=beta
+		self.cfdInput['alpha']=alpha
+		
+		self.cfdInput['rho_l']=rho_l
+		self.cfdInput['u_l']=u_l
+		self.cfdInput['p_l']=p_l
+		self.cfdInput['rho_r']=rho_r
+		self.cfdInput['u_r']=u_r
+		self.cfdInput['p_r']=p_r
 
+		self.cfdInput['tf']=tf
+		self.cfdInput['itrf']= itrf
+		self.cfdInput['gamma'] = gamma
 		
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
