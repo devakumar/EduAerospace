@@ -26,13 +26,15 @@ class Plot(FigureCanvas):
 			if element.elementInfo['type'] != 'uniformFlow' :
 				self.item.plot(element.elementInfo['pos'].real, element.elementInfo['pos'].imag, self.colors[element.elementInfo['type']])
 
-	def plotStreakParticles(self, particles):
+	def plotStreakParticles(self, particles, tag = "pathLines"):
 		""" Initializing the plot of streak particles """
+		if tag == "streamLines": color = 'k-'
+		else : color = ''
 		self.plots = list(zeros(len(particles)))
 		for index in range(0, len(particles)):
 			xValues = [pos.real for pos in particles[index].history]
 			yValues = [pos.imag for pos in particles[index].history]
-			self.plots[index], = self.item.plot(xValues, yValues)
+			self.plots[index], = self.item.plot(xValues, yValues, color)
 	
 	def clearStreakParticles(self):
 		""" Clear the plots corresponding to streak particles """

@@ -194,22 +194,21 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.fig.canvas.draw()
 		self.pushButton_toggleSimulation.setEnabled(True)
 		self.pushButton_toggleSimulation.setText("&Pause")
+		self.count = 0
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
 		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
 			self.potStreakParticles = []
 			self.potAddStreakParticles()
-			self.count = 0
-			self.timerEvent(None)
-			if self.timer != None :
-				self.killTimer(self.timer)
-			self.timer = self.startTimer(0.001)
-
 		elif (self.plotType == 'streamLines') and (self.potLibrary.elements != []):
-			if self.timer != None :
-				self.killTimer(self.timer)
-			self.statusbar.showMessage("Plotting the stream lines. This may take some time...", 10000)
-			self.potPlotStreamLines()
+			self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
+			self.potAddStreamParticles()
+
+		# Start simulation in real time	
+		self.timerEvent(None)
+		if self.timer != None :
+			self.killTimer(self.timer)
+		self.timer = self.startTimer(0.001)
 
 	def potResizeGraphicWindow(self):
 		""" Resizes the plot widget based on the present elements """
@@ -227,17 +226,35 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def timerEvent(self, event):
 		""" Supposed to update the plot """
-		self.potAdvectParticles(dt = 0.01)
-		if self.graphicWidget.plots != None :
-			for index in range(0, len(self.potStreakParticles)):
-				xData = [pos.real for pos in self.potStreakParticles[index].history]
-				yData = [pos.imag for pos in self.potStreakParticles[index].history]
-				self.graphicWidget.plots[index].set_data(xData, yData)
-		self.graphicWidget.fig.canvas.draw()
-		if self.count < 0:
-			self.killTimer(self.timer)
-		else :
-			self.count += 1
+		if self.plotType == "stremLines" :
+			repeat = 2
+			maxCount = 10
+		else : 
+			repeat = 1
+			maxCount = self.count + 1
+		for instnace in range(repeat):
+			self.potAdvectParticles(dt = 0.01)
+			if self.graphicWidget.plots != None :
+				for index in range(0, len(self.potStreakParticles)):
+					xData = [pos.real for pos in self.potStreakParticles[index].history]
+					yData = [pos.imag for pos in self.potStreakParticles[index].history]
+					self.graphicWidget.plots[index].set_data(xData, yData)
+			self.graphicWidget.fig.canvas.draw()
+			if self.count > maxCount:
+				self.killTimer(self.timer)
+			else :
+				self.count += 1
+		self.statusbar.showMessage("Done", 1000)
+		# to set auto scale on if axis limits are exceeded
+		if self.plotType != "stremLines":
+			xRange = [item.pos.real for item in self.potStreakParticles]
+			yRange = [item.pos.imag for item in self.potStreakParticles]
+			if min(xRange) < self.axisRange[0]: self.axisRange += array([min(xRange) - self.axisRange[0], 0, 0, 0])
+			if max(xRange) > self.axisRange[1]: self.axisRange += array([0, max(xRange) -self.axisRange[1], 0, 0])
+			if min(yRange) < self.axisRange[2]: self.axisRange += array([0, 0, min(yRange) -self.axisRange[2], 0])
+			if max(yRange) > self.axisRange[3]: self.axisRange += array([0, 0, 0, max(yRange) -self.axisRange[3]])
+			self.graphicWidget.item.axis(array(self.axisRange))
+			self.graphicWidget.fig.canvas.draw()
 
 	def potAdvectParticles(self, dt = 0.01):
 		""" Advect the particles for a given time step """
@@ -334,7 +351,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		else :
 			pass
 
-	def potPlotStreamLines(self):
+	def potAddStreamParticles(self):
 		""" Takes the dimwentions of plot widget and plots stream lines by
 		advecting the particles for a small time step dt """
 		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*3
@@ -342,7 +359,18 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potStreakParticles = [particle(x, y) for x in linspace(self.axisRange[1], self.axisRange[0], \
 				noOfParticlesAtY) for y in linspace(self.axisRange[2]+0.1, self.axisRange[3]-0.1, noOfParticlesAtX)]
 		self.graphicWidget.item.grid(False)
-		for steps in range(1):
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles, tag = "streamLines")
+		self.graphicWidget.fig.canvas.draw()
+
+	def potVelocityPlot(self):
+		""" Takes the dimwentions of plot widget and plots stream lines by
+		advecting the particles for a small time step dt """
+		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*3
+		noOfParticlesAtY = int(self.axisRange[1] - self.axisRange[0])*2
+		self.potStreakParticles = [particle(x, y) for x in linspace(self.axisRange[1], self.axisRange[0], \
+				noOfParticlesAtY) for y in linspace(self.axisRange[2]+0.1, self.axisRange[3]-0.1, noOfParticlesAtX)]
+		self.graphicWidget.item.grid(False)
+		for steps in range(2):
 			self.potAdvectParticles(dt = 0.02)
 			for index in range(0, len(self.potStreakParticles)):
 				positions = [(pos.real, pos.imag) for pos in self.potStreakParticles[index].history]
@@ -351,6 +379,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.fig.canvas.draw()
 		self.statusbar.clearMessage()
 		self.statusbar.showMessage("Done", 2000)
+
 
 	""" CFD declarations """
 	def cfdSimulate(self):
