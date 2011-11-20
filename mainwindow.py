@@ -25,8 +25,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.filename = None
 		self.setupUi(self)
 		self.setCentralWidget(self.centralwidget)
-		#self.scope = 'potentialFlows'
-		self.scope = 'cfd'
+		self.scope = 'potentialFlows'
+		#self.scope = 'cfd'
 
 		# Potential flow variable declarations
 		self.potLibrary = potentialLibrary()
@@ -248,7 +248,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				self.count += 1
 		self.statusbar.showMessage("Done", 1000)
 		# to set auto scale on if axis limits are exceeded
-		if self.plotType != "stremLines":
+		if self.plotType != "stremLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
 			if min(xRange) < self.axisRange[0]: self.axisRange += array([min(xRange) - self.axisRange[0], 0, 0, 0])
