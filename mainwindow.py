@@ -58,7 +58,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.InputPotentialFlows_Dock.setHidden(False)
 			self.InputCFD_Dock.setHidden(True)
 			# The following will set the input widget accordingly
-			self.potSetVisible(not self.radioButton_UniformFlow.isChecked())
+			self.radioButton_Source.setChecked(True)
+			self.potSetVisible(self.radioButton_UniformFlow.isChecked())
 			# Following block will set window for visulaization. A matplotlib Figure window
 			self.graphicWidget = Plot()
 			self.graphicWidget.setParent(self)
@@ -86,7 +87,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 	def potaddElement(self):
 		""" SLOT for add action in  GUI """
 		self.elementInfo = {}
-		X = self.doubleSpinBox_X.value()
+		X = self.doubleSpinBox_FlowAngle_OR_X.value()
 		Y = self.doubleSpinBox_Y.value()
 		self.elementInfo['pos'] =  X + 1j*Y
 		self.elementInfo['strength'] = self.doubleSpinBox_Strength.value()
@@ -108,7 +109,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidget_potElements.topLevelItem(2).addChild(self.treeWidgetItem)
 		elif self.radioButton_UniformFlow.isChecked():
 			self.elementInfo['type'] = 'uniformFlow'
-			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle.value()
+			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle_OR_X.value()
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ " + str(self.elementInfo['angle']) + "deg"], 3)
 			self.treeWidget_potElements.topLevelItem(3).addChild(self.treeWidgetItem)
@@ -147,23 +148,23 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 	def potClearData(self):
 		""" Clears the values in DoubleSpinBoxes and sets them to default
 		values """
-		self.doubleSpinBox_X.setValue(0.0)
+		self.doubleSpinBox_FlowAngle_OR_X.setValue(0.0)
 		self.doubleSpinBox_Y.setValue(0.0)
 		self.doubleSpinBox_Strength.setValue(0.0)
 
 	def potSourceSelected(self):
 		""" """
-		self.potSetVisible(True)
+		self.potSetVisible(False)
 		self.doubleSpinBox_Strength.setMinimum(0.0)
 
 	def potSinkSelected(self):
 		""" """
-		self.potSetVisible(True)
+		self.potSetVisible(False)
 		self.doubleSpinBox_Strength.setMinimum(0.0)
 
 	def potDoubletSelected(self):
 		""" """
-		self.potSetVisible(True)
+		self.potSetVisible(False)
 		self.doubleSpinBox_Strength.setRange(self.potStrengthRange[0], self.potStrengthRange[1])
 
 	def potVortexSelected(self):
@@ -173,21 +174,25 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potUniformFlowSelected(self):
 		""" """
-		self.potSetVisible(False)
+		self.potSetVisible(True)
 		self.doubleSpinBox_Strength.setRange(self.potStrengthRange[0], self.potStrengthRange[1])
 
 	def potSetVisible(self, isUniform):
 		""" """
-		self.label_X.setHidden(not isUniform)
-		self.doubleSpinBox_X.setHidden(not isUniform)
-		self.label_Y.setHidden(not isUniform)
-		self.doubleSpinBox_Y.setHidden(not isUniform)
-		self.label_FlowAngle.setHidden(isUniform)
-		self.doubleSpinBox_FlowAngle.setHidden(isUniform)
-		if isUniform:
-			self.label_Strength.setText("Strength")
-		else :
+		if isUniform: 
+			self.label_X.setText("Flow angle")
+			self.doubleSpinBox_FlowAngle_OR_X.setMinimum(-360.0)
+			self.doubleSpinBox_FlowAngle_OR_X.setMaximum(360.0)
+			self.doubleSpinBox_FlowAngle_OR_X.setSingleStep(1.0)
+			self.doubleSpinBox_FlowAngle_OR_X.resize(self.doubleSpinBox_Strength.size())
 			self.label_Strength.setText("Velocity")
+		else : 
+			self.doubleSpinBox_FlowAngle_OR_X.setMinimum(-10000.0)
+			self.doubleSpinBox_FlowAngle_OR_X.setMaximum(10000.0)
+			self.doubleSpinBox_FlowAngle_OR_X.setSingleStep(0.1)
+			self.label_X.setText("(X, Y)")
+			self.label_Strength.setText("Strength")
+		self.doubleSpinBox_Y.setHidden(isUniform)
 
 	def potSimulate(self):
 		""" SLOT for simulate button click """
@@ -329,7 +334,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
-			self.label_patchInfo2.setHidden(True)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("length")
 		elif patchType == 'Circular':
@@ -338,7 +342,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
-			self.label_patchInfo2.setHidden(True)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("Radius")
 		elif patchType == 'Line at X':
@@ -347,7 +350,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(True)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
-			self.label_patchInfo2.setHidden(True)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("At X ")
 		else :

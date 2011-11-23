@@ -1,4 +1,5 @@
--------DONE-------0. Add navigation tool bar to the plot window
+0. Add navigation tool bar to the plot window-------DONE-------
 1. Provision for Editing potential elements
-2. Clear the plot window when simulate button is pressed twice
+2. Clear the plot window when simulate button is pressed twice-------DONE-------
 3. Output control window design and implementation
+4. Implement rk2
