@@ -123,6 +123,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			pass
 
 		self.potLibrary.addElement(self.elementInfo)
+		message = "Added " + self.elementInfo['type'] + " element with strength = " + str(self.elementInfo['strength'])
+		self.statusbar.showMessage(message , 1500)
 		# Plot the addes element in the figure widget
 		self.graphicWidget.plotPotElements([self.potLibrary.elements[-1]])
 		self.potResizeGraphicWindow()
@@ -137,6 +139,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if self.elementTreeItemDict.has_key(selected[0]):
 			self.potLibrary.deleteElement(self.elementTreeItemDict[selected[0]])
 			del self.elementTreeItemDict[selected[0]]
+			message = "Removed the element. Nothing to worry if it still appears in the list"
+			self.statusbar.showMessage(message , 1500)
 			# self.treeWidget_potElements.topLevelItem(0).removeChild(self.treeWidget_potElements.topLevelItem(0).child(1))
 			# Need to clear the plot before plotting
 			self.graphicWidget.plotPotElements(self.potLibrary.elements)
@@ -144,6 +148,9 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.graphicWidget.fig.canvas.draw()
 			# The following thing is not working - Check why. However the element from the library is deleted
 			self.treeWidget_potElements.removeItemWidget(selected[0], 0)
+		else :
+			message = " Nothing to remove"
+			self.statusbar.showMessage(message , 1500)
 
 	def potClearData(self):
 		""" Clears the values in DoubleSpinBoxes and sets them to default
@@ -252,6 +259,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			else :
 				self.count += 1
 		# to set auto scale on if axis limits are exceeded
+		self.graphicWidget.item.axis('equal')
+		self.axisRange = self.graphicWidget.item.axis()
 		if self.plotType != "stremLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
@@ -322,10 +331,26 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		""" Sets plot type and displays required input properties for that scope """
 		if (self.radioButton_StreamLines.isChecked()):
 			self.plotType = 'streamLines'
+			# To set the patch input parameters invisible
+			self.potSetPatchInVisibility(True)
 		elif (self.radioButton_PathLines.isChecked()):
 			self.plotType = 'pathLines'
+			self.potSetPatchInVisibility(False)
 		else :
 			pass
+
+	def potSetPatchInVisibility(self, invisible):
+		""" sets the patch visible when path lines is selected and invisible
+		for all other inputs"""
+		self.label_center.setHidden(invisible)
+		self.doubleSpinBox_centerX.setHidden(invisible)
+		self.doubleSpinBox_centerY.setHidden(invisible)
+		self.label_patchInfo1.setHidden(invisible)
+		self.doubleSpinBox_patchInfo1.setHidden(invisible)
+		self.doubleSpinBox_patchInfo2.setHidden(invisible)
+		self.label_patchInfo1.setHidden(invisible)
+		self.comboBox_pathLines.setHidden(invisible)
+		self.pushButton_potAddpatch.setHidden(invisible)
 
 	def potSetPatchInputParameters(self):
 		""" Sets corresponding input parameters for the patch of selected type"""
@@ -336,6 +361,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
+			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("length")
 		elif patchType == 'Circular':
@@ -344,16 +371,26 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
+			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("Radius")
-		elif patchType == 'Line at X':
+		elif patchType == 'Line at X' or patchType == 'Line at Y':
 			self.label_center.setHidden(True)
 			self.doubleSpinBox_centerX.setHidden(True)
 			self.doubleSpinBox_centerY.setHidden(True)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
-			self.label_patchInfo1.setText("At X ")
+			if patchType == 'Line at X': self.label_patchInfo1.setText("At X ")
+			elif patchType == 'Line at Y': self.label_patchInfo1.setText("At Y ")
+		elif patchType == 'Rectangular':
+			self.potSetPatchInVisibility(False)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
+			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
+			self.doubleSpinBox_patchInfo2.setMinimum(0.1)
+			self.doubleSpinBox_patchInfo2.setSingleStep(0.1)
+			self.label_patchInfo1.setText("(l, b)")
 		else :
 			pass
 
