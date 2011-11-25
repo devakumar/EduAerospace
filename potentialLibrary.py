@@ -5,9 +5,16 @@ class particle(object):
 	def __init__(self, xCoord, yCoord):
 		self.pos = xCoord + 1j*yCoord
 		self.velocity = 0.0
+		self.k1 = 0.0
+		self.k2 = 0.0
 		self.history = [self.pos]
-	def advect(self, dt = 0.01):
-		self.pos = self.velocity*dt + self.pos
+	def advect(self, dt = 0.01, integType = 'euler'):
+		if integType == 'euler':
+			self.pos = self.velocity*dt + self.pos
+		elif integType == 'rk2' :
+			self.pos = self.pos + 0.5*(self.k1 + self.k2)
+		else :
+			raise NameError("Integration type unknown")
 		self.history.append(self.pos)
 
 class potElement(object):

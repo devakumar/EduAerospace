@@ -169,7 +169,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potVortexSelected(self):
 		""" """
-		self.potSetVisible(True)
+		self.potSetVisible(False)
 		self.doubleSpinBox_Strength.setRange(self.potStrengthRange[0], self.potStrengthRange[1])
 
 	def potUniformFlowSelected(self):
@@ -240,7 +240,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			repeat = 1
 			maxCount = self.count + 1
 		for instnace in range(repeat):
-			self.potAdvectParticles(dt = 0.01)
+			self.potAdvectParticles(dt = 0.01, integType = 'rk2')
 			if self.graphicWidget.plots != None :
 				for index in range(0, len(self.potStreakParticles)):
 					xData = [pos.real for pos in self.potStreakParticles[index].history]
@@ -251,7 +251,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				self.killTimer(self.timer)
 			else :
 				self.count += 1
-		self.statusbar.showMessage("Done", 1000)
 		# to set auto scale on if axis limits are exceeded
 		if self.plotType != "stremLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
@@ -263,12 +262,15 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.graphicWidget.item.axis(array(self.axisRange))
 			self.graphicWidget.fig.canvas.draw()
 
-	def potAdvectParticles(self, dt = 0.01):
+	def potAdvectParticles(self, dt = 0.01, integType = 'euler'):
 		""" Advect the particles for a given time step """
 		for streak in self.potStreakParticles :
 			streak.velocity = self.potLibrary.velocityAt(streak.pos)
 			self.potSingularitiesTreatment()
-			streak.advect(dt)
+			if integType == 'rk2':
+				streak.k1 = dt*streak.velocity
+				streak.k2 = dt*self.potLibrary.velocityAt(streak.pos + streak.k1)
+			streak.advect(dt = dt, integType = integType)
 		
 	def potSingularitiesTreatment(self):
 		""" Treat the particles if they are close to any singularity """
@@ -367,7 +369,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.fig.canvas.draw()
 
 	def potVelocityPlot(self):
-		""" Takes the dimwentions of plot widget and plots stream lines by
+		""" Takes the dimensions of plot widget and plots stream lines by
 		advecting the particles for a small time step dt """
 		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*3
 		noOfParticlesAtY = int(self.axisRange[1] - self.axisRange[0])*2
@@ -381,9 +383,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				axis = self.graphicWidget.fig.gca()
 				axis.add_patch(FancyArrowPatch(positions[0],positions[-1],arrowstyle='->',mutation_scale=15))
 		self.graphicWidget.fig.canvas.draw()
-		self.statusbar.clearMessage()
-		self.statusbar.showMessage("Done", 2000)
-
 
 	""" CFD declarations """
 	def cfdSimulate(self):
