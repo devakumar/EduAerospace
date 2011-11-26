@@ -13,8 +13,10 @@ from PyQt4.QtCore import *
 # Local libraries
 from potentialLibrary import *
 from plot import *
+from math import *
 from ui import ui_mainwindow
 from cfdSolver import *
+import time
 
 __version__ = "1.0.0"
 
@@ -25,8 +27,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.filename = None
 		self.setupUi(self)
 		self.setCentralWidget(self.centralwidget)
-		self.scope = 'potentialFlows'
-		#self.scope = 'cfd'
+		#self.scope = 'potentialFlows'
+		self.scope = 'cfd'
 
 		# Potential flow variable declarations
 		self.potLibrary = potentialLibrary()
@@ -54,6 +56,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.radioButton_PathLines, SIGNAL("clicked()"), self.potSetPlotScope)
 		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
 		QObject.connect(self.pushButton_cfdSimulate, SIGNAL("clicked()"), self.cfdSimulate)
+		QObject.connect(self.pushButton_advecSimulate, SIGNAL("clicked()"), self.advecSimulate)
+
 
 		if self.scope == 'potentialFlows' :
 			self.InputPotentialFlows_Dock.setHidden(False)
@@ -247,28 +251,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		elif self.potElemRange == None :
 			self.potElemRange = [-1.0, 1.0, -1.0, 1.0]
 			self.graphicWidget.item.axis(array(self.graphicWidget.defalutRange))
-
-	def timerEvent(self, event):
-		""" Supposed to update the plot """
-		if self.plotType == "stremLines" :
-			repeat = 2
-			maxCount = 10
-		else : 
-			repeat = 1
-			maxCount = self.count + 1
-		for instnace in range(repeat):
-			self.potAdvectParticles(dt = 0.01, integType = 'rk2')
-			if self.graphicWidget.plots != None :
-				for index in range(0, len(self.potStreakParticles)):
-					xData = [pos.real for pos in self.potStreakParticles[index].history]
-					yData = [pos.imag for pos in self.potStreakParticles[index].history]
-					self.graphicWidget.plots[index].set_data(xData, yData)
-			self.graphicWidget.fig.canvas.draw()
-			if self.count > maxCount:
-				self.killTimer(self.timer)
-			else :
-				self.count += 1
-		self.potAutoscaleAxis()
 
 	def potAutoscaleAxis(self):
 		""" To set auto scale on if axis limits are exceeded"""
@@ -475,9 +457,46 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				axis = self.graphicWidget.fig.gca()
 				axis.add_patch(FancyArrowPatch(positions[0],positions[-1],arrowstyle='->',mutation_scale=15))
 		self.graphicWidget.fig.canvas.draw()
+	def timerEvent(self, event):
+		""" Supposed to update the plot """
+		if self.scope == 'potentialFlows':
+			if self.plotType == "stremLines" :
+				repeat = 2
+				maxCount = 10
+			else : 
+				repeat = 1
+				maxCount = self.count + 1
+			for instnace in range(repeat):
+				self.potAdvectParticles(dt = 0.01, integType = 'rk2')
+				if self.graphicWidget.plots != None :
+					for index in range(0, len(self.potStreakParticles)):
+						xData = [pos.real for pos in self.potStreakParticles[index].history]
+						yData = [pos.imag for pos in self.potStreakParticles[index].history]
+						self.graphicWidget.plots[index].set_data(xData, yData)
+				self.graphicWidget.fig.canvas.draw()
+				if self.count > maxCount:
+					self.killTimer(self.timer)
+				else :
+					self.count += 1
+			self.potAutoscaleAxis()
+		if self.scope == 'cfd':
+			if self.cfdSimulatescope =='shock':
+				pass
+			else:
+				if self.t > self.itr:
+						self.killTimer(self.timer)
+				else:
+					self.clearPlot()
+					self.advecItr()
+					self.graphicWidget.item.plot(self.x,self.uinit,'r')
+					self.graphicWidget.item.plot(self.x,self.u,'k')
+					self.graphicWidget.fig.canvas.draw()
+					
+			
 
 	""" CFD declarations """
 	def cfdSimulate(self):
+		self.cfdSimulatescope='shock'
 		self.clearPlot()
 		self.cfdInput()
 		lst=[0.5,0.5,self.cfdInput['cfl'],self.cfdInput['length'],self.cfdInput['diphrmPostn'],self.cfdInput['numCells'] ]
@@ -549,6 +568,107 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.cfdInput['tf']=tf
 		self.cfdInput['itrf']= itrf
 		self.cfdInput['gamma'] = gamma
+		
+	def advecSimulate(self):
+		self.cfdSimulatescope='advec'
+		self.numCells=self.doubleSpinBox_advecCellNum.value()
+		self.itr=self.doubleSpinBox_advecitrf.value()
+		self.Length = self.doubleSpinBox_advecLength.value()
+		self.c=self.doubleSpinBox_advecC.value()
+		self.CFL=self.doubleSpinBox_advecCFL.value()
+		self.deltaX=self.Length/self.numCells
+		self.deltaT=self.CFL*self.deltaX/self.c
+		self.x=[]
+		self.u=[]
+		self.u0=[]
+		self.uinit=[]
+		# initialization
+		#### Step Up Initialization
+		if 	self.radioButton_stepUp.isChecked():
+			i=0
+			while i <= (self.numCells/2):
+				self.x.append( self.Length*(i-1.0)/self.numCells )
+				self.u.append( 1)
+				self.uinit.append(1)
+				self.u0.append(1)
+				i+=1	
+			i=self.numCells/2+1
+			while i<=self.numCells+1:
+				self.x.append(self.Length*(i-1.0)/self.numCells )
+				self.u.append(2)
+				self.uinit.append(2)
+				self.u0.append( 2)
+				i+=1
+		#### Step Down Initialization
+		if 	self.radioButton_stepDown.isChecked():
+			i=0
+			while i <= (self.numCells/2):
+				self.x.append( self.Length*(i-1.0)/self.numCells )
+				self.u.append(2)
+				self.uinit.append(2)
+				self.u0.append(2)
+				i+=1	
+			i=self.numCells/2+1
+			while i<=numCells+1:
+				self.x.append(self.Length*(i-1.0)/self.numCells )
+				self.u.append(1)
+				self.uinit.append(1)
+				self.u0.append( 1)
+				i+=1
+		#### Sin Initialization
+		if 	self.radioButton_advecSin.isChecked():
+			i=0
+			while i <= (self.numCells+1):		
+				self.x.append(self.Length*(i - 1.0) / (self.numCells))
+				self.u.append(math.sin(2.0 * 3.141592654 * self.x[i] / self.Length) )
+				self.u0.append(		sin(2.0 * 3.141592654 * self.x[i] / self.Length) )
+				self.uinit.append(	sin(2.0 * 3.141592654 * self.x[i] / self.Length) )
+				i+=1
+		#print "numCells: ",self.numCells," CFL",self.CFL," Itr: ",self.itr
+		self.t=0
+		self.timerEvent(None)
+		self.timer = self.startTimer(100)
+
+
+	def advecItr(self):
+		self.t+=1
+		#print " t: ",self.t
+		i=1
+		while i <= self.numCells:
+	    	##### FTCS
+			if 	self.radioButton_FTCS.isChecked():
+				#print i
+				self.u[i] = self.u0[i] - (self.c * self.deltaT / (2.0*self.deltaX) ) * (self.u0[i+1] - self.u0[i-1])
+            ##### FTFS
+			if 	self.radioButton_FTFS.isChecked():
+				self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i+1] - self.u0[i])
+        	##### FTBS
+			if 	self.radioButton_FTBS.isChecked():            	
+				self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i] - self.u0[i-1])
+            ##### Upwind
+			if 	self.radioButton_Upwind.isChecked():            	
+				if (self.c>0.0):
+					self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i] - self.u0[i-1])
+	        	elif (self.c<0.0):
+	        		self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i+1] - self.u0[i])
+        	##### Lax Wendroff
+			if 	self.radioButton_LaxWendroff.isChecked():            	
+				self.lamda = self.c * self.deltaT / self.deltaX
+				self.u[i] = self.u0[i] - ( ( self.lamda / 2.0 ) * (self.u0[i+1] - self.u0[i-1])) + ( ( self.lamda * self.lamda / 2.0) * (self.u0[i+1] - 2.0 * self.u0[i] + self.u0[i-1]) ) 
+		 	i+=1				
+		#print " t3:",self.t
+		#print " t6:",self.t
+		i=1
+		while i <= self.numCells:
+			self.u0[i] = self.u[i]
+			i+=1
+		#print " t4:",self.t
+		self.u0[0] = self.u0[int(numCells)]
+		#print " t5:",self.t
+		self.u0[int(numCells)+1] = self.u0[1]
+		#print "t2: ",self.t
+
+
 		
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

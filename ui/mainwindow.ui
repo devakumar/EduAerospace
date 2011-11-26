@@ -9,15 +9,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1132</width>
-    <height>689</height>
+    <width>826</width>
+    <height>755</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>755</height>
+   </size>
   </property>
   <property name="mouseTracking">
    <bool>false</bool>
@@ -667,7 +673,7 @@
         <property name="minimumSize">
          <size>
           <width>400</width>
-          <height>609</height>
+          <height>675</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -720,7 +726,7 @@
              <enum>QTabWidget::Rounded</enum>
             </property>
             <property name="currentIndex">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="tabsClosable">
              <bool>false</bool>
@@ -876,11 +882,60 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="pushButton_cfdSimulate">
-                <property name="text">
-                 <string>Run</string>
-                </property>
-               </widget>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <item>
+                 <spacer name="horizontalSpacer_19">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_uL_4">
+                  <property name="midLineWidth">
+                   <number>1</number>
+                  </property>
+                  <property name="text">
+                   <string>Left</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_20">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="QLabel" name="label_uL_8">
+                  <property name="midLineWidth">
+                   <number>1</number>
+                  </property>
+                  <property name="text">
+                   <string>Right</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_28">
@@ -890,12 +945,25 @@
                    <number>1</number>
                   </property>
                   <property name="text">
-                   <string>Velocity(Left)</string>
+                   <string>Velocity</string>
                   </property>
                   <property name="buddy">
                    <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_14">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_cfduL">
@@ -916,115 +984,18 @@
                   </property>
                  </widget>
                 </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_46">
                 <item>
-                 <widget class="QLabel" name="label_cfdDiaphramPosition_15">
-                  <property name="text">
-                   <string>Pressure(Right)</string>
+                 <spacer name="horizontalSpacer_13">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
                   </property>
-                  <property name="buddy">
-                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
                   </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdpresR">
-                  <property name="minimum">
-                   <double>0.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>1000000000.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>100.000000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.100000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_27">
-                <item>
-                 <widget class="QLabel" name="label_cfdDiaphramPosition_5">
-                  <property name="text">
-                   <string>Pressure(Left)</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdpresL">
-                  <property name="minimum">
-                   <double>0.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>1000000000.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>100.000000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>1.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_45">
-                <item>
-                 <widget class="QLabel" name="label_cfdrhoL_4">
-                  <property name="text">
-                   <string>Density(Right)</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdrhoR">
-                  <property name="decimals">
-                   <number>6</number>
-                  </property>
-                  <property name="minimum">
-                   <double>0.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>1000000000.000000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>0.125000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_44">
-                <item>
-                 <widget class="QLabel" name="label_uL_4">
-                  <property name="midLineWidth">
-                   <number>1</number>
-                  </property>
-                  <property name="text">
-                   <string>Velocity(Right)</string>
-                  </property>
-                  <property name="buddy">
-                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                  </property>
-                 </widget>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_cfduR">
@@ -1048,16 +1019,75 @@
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_26">
+               <layout class="QHBoxLayout" name="horizontalLayout_46">
                 <item>
-                 <widget class="QLabel" name="label_cfdrhoL_2">
+                 <widget class="QLabel" name="label_cfdDiaphramPosition_15">
                   <property name="text">
-                   <string>Density(Left)</string>
+                   <string>Pressure</string>
                   </property>
                   <property name="buddy">
                    <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdpresL">
+                  <property name="minimum">
+                   <double>0.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>100.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdpresR">
+                  <property name="minimum">
+                   <double>0.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>100.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>0.100000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_45">
+                <item>
+                 <widget class="QLabel" name="label_cfdrhoL_4">
+                  <property name="text">
+                   <string>Density</string>
+                  </property>
+                  <property name="buddy">
+                   <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_17">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                 <item>
                  <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdrhoL">
@@ -1077,6 +1107,38 @@
                    <double>1.000000000000000</double>
                   </property>
                  </widget>
+                </item>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdrhoR">
+                  <property name="decimals">
+                   <number>6</number>
+                  </property>
+                  <property name="minimum">
+                   <double>0.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>1000000000.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>0.125000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_18">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
                 </item>
                </layout>
               </item>
@@ -1180,6 +1242,13 @@
                </layout>
               </item>
               <item>
+               <widget class="QPushButton" name="pushButton_cfdSimulate">
+                <property name="text">
+                 <string>Run</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <spacer name="verticalSpacer_2">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
@@ -1198,348 +1267,622 @@
              <attribute name="title">
               <string>Output Control</string>
              </attribute>
-             <widget class="QWidget" name="layoutWidget_2">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>280</y>
-                <width>291</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_23">
-               <item>
-                <widget class="QLabel" name="label_minfsq">
-                 <property name="text">
-                  <string>minfsq</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdminfsq">
-                 <property name="decimals">
-                  <number>6</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_3">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>310</y>
-                <width>278</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_24">
-               <item>
-                <widget class="QLabel" name="label_cfdku">
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="text">
-                  <string>ku</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdku">
-                 <property name="decimals">
-                  <number>4</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000000000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>10.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.750000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_4">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>340</y>
-                <width>274</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_25">
-               <item>
-                <widget class="QLabel" name="label_cfdkp">
-                 <property name="text">
-                  <string>kp</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdkp">
-                 <property name="decimals">
-                  <number>4</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>100.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.250000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_16">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>220</y>
-                <width>274</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_41">
-               <item>
-                <widget class="QLabel" name="label_cfdDiaphramPosition_14">
-                 <property name="text">
-                  <string>alpha</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdalpha">
-                 <property name="minimum">
-                  <double>0.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>100.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.190000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_17">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>370</y>
-                <width>274</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_42">
-               <item>
-                <widget class="QLabel" name="label_cfdsigma">
-                 <property name="text">
-                  <string>sigma</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdsigma">
-                 <property name="decimals">
-                  <number>6</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-1000000000.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>1.000000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="layoutWidget_18">
-              <property name="geometry">
-               <rect>
-                <x>30</x>
-                <y>250</y>
-                <width>274</width>
-                <height>29</height>
-               </rect>
-              </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_43">
-               <item>
-                <widget class="QLabel" name="label_uL_3">
-                 <property name="midLineWidth">
-                  <number>1</number>
-                 </property>
-                 <property name="text">
-                  <string>beta</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdbeta">
-                 <property name="decimals">
-                  <number>6</number>
-                 </property>
-                 <property name="minimum">
-                  <double>-999999999.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>1000000000.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>10.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.125000000000000</double>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QRadioButton" name="HLLC">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>20</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>HLLC</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="radioButton_2">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>80</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>AUSM</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="AUSMUp">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>130</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>AUSM+Up</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="VanLeer">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>40</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>VanLeer</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="AUSMp">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>110</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>AUSM+</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="HLL">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>HLL</string>
-              </property>
-             </widget>
-             <widget class="QRadioButton" name="StegerWarming">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>60</y>
-                <width>360</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>StegerWarming</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" name="horizontalLayout_16">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_18">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_16">
+                  <item>
+                   <widget class="QRadioButton" name="HLL">
+                    <property name="text">
+                     <string>HLL</string>
+                    </property>
+                    <property name="checkable">
+                     <bool>true</bool>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                    <property name="autoRepeat">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="HLLC">
+                    <property name="text">
+                     <string>HLLC</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="VanLeer">
+                    <property name="text">
+                     <string>VanLeer</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="StegerWarming">
+                    <property name="text">
+                     <string>StegerWarming</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButton_2">
+                    <property name="text">
+                     <string>AUSM</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="AUSMp">
+                    <property name="text">
+                     <string>AUSM+</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="AUSMUp">
+                    <property name="text">
+                     <string>AUSM+Up</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_17">
+                  <item>
+                   <widget class="QGroupBox" name="groupBox_3">
+                    <property name="title">
+                     <string>GroupBox</string>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_20">
+                     <item>
+                      <layout class="QVBoxLayout" name="verticalLayout_19">
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_41">
+                         <item>
+                          <widget class="QLabel" name="label_cfdDiaphramPosition_14">
+                           <property name="text">
+                            <string>alpha</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdalpha">
+                           <property name="minimum">
+                            <double>0.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>100.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.190000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_43">
+                         <item>
+                          <widget class="QLabel" name="label_uL_3">
+                           <property name="midLineWidth">
+                            <number>1</number>
+                           </property>
+                           <property name="text">
+                            <string>beta</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdbeta">
+                           <property name="decimals">
+                            <number>6</number>
+                           </property>
+                           <property name="minimum">
+                            <double>-999999999.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>10.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.125000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_23">
+                         <item>
+                          <widget class="QLabel" name="label_minfsq">
+                           <property name="text">
+                            <string>minfsq</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdminfsq">
+                           <property name="decimals">
+                            <number>6</number>
+                           </property>
+                           <property name="minimum">
+                            <double>0.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>1.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_24">
+                         <item>
+                          <widget class="QLabel" name="label_cfdku">
+                           <property name="midLineWidth">
+                            <number>1</number>
+                           </property>
+                           <property name="text">
+                            <string>ku</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdku">
+                           <property name="decimals">
+                            <number>4</number>
+                           </property>
+                           <property name="minimum">
+                            <double>-1000000000.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>10.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.750000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_25">
+                         <item>
+                          <widget class="QLabel" name="label_cfdkp">
+                           <property name="text">
+                            <string>kp</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdkp">
+                           <property name="decimals">
+                            <number>4</number>
+                           </property>
+                           <property name="minimum">
+                            <double>0.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>100.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>0.250000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_42">
+                         <item>
+                          <widget class="QLabel" name="label_cfdsigma">
+                           <property name="text">
+                            <string>sigma</string>
+                           </property>
+                           <property name="buddy">
+                            <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QDoubleSpinBox" name="doubleSpinBox_cfdsigma">
+                           <property name="decimals">
+                            <number>6</number>
+                           </property>
+                           <property name="minimum">
+                            <double>-1000000000.000000000000000</double>
+                           </property>
+                           <property name="maximum">
+                            <double>1000000000.000000000000000</double>
+                           </property>
+                           <property name="singleStep">
+                            <double>1.000000000000000</double>
+                           </property>
+                           <property name="value">
+                            <double>1.000000000000000</double>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                      </layout>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab">
+             <attribute name="title">
+              <string>Advection</string>
+             </attribute>
+             <layout class="QHBoxLayout" name="horizontalLayout_11">
+              <item>
+               <layout class="QVBoxLayout" name="verticalLayout_15">
+                <item>
+                 <layout class="QVBoxLayout" name="verticalLayout_12">
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_63">
+                    <item>
+                     <widget class="QLabel" name="label_cfl_3">
+                      <property name="text">
+                       <string>CFL:</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>doubleSpinBox_CFL</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="doubleSpinBox_advecCFL">
+                      <property name="decimals">
+                       <number>4</number>
+                      </property>
+                      <property name="minimum">
+                       <double>0.000000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>100000.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>0.100000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>1.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_39">
+                    <item>
+                     <widget class="QLabel" name="label_cfdNoOfCells_3">
+                      <property name="text">
+                       <string>Number Of Cells:</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>doubleSpinBox_cfdcellNum</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="doubleSpinBox_advecCellNum">
+                      <property name="decimals">
+                       <number>0</number>
+                      </property>
+                      <property name="minimum">
+                       <double>1.000000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>1000000000.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>10.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>100.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_61">
+                    <item>
+                     <widget class="QLabel" name="label_cfdDiaphramPosition_24">
+                      <property name="text">
+                       <string>No. of Iterations</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="doubleSpinBox_advecitrf">
+                      <property name="decimals">
+                       <number>0</number>
+                      </property>
+                      <property name="minimum">
+                       <double>0.000000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>1000000000.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>100.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>10.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_40">
+                    <item>
+                     <widget class="QLabel" name="label_cfdLength_3">
+                      <property name="text">
+                       <string>Length</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>doubleSpinBox_cfdLength</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="doubleSpinBox_advecLength">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="decimals">
+                       <number>6</number>
+                      </property>
+                      <property name="minimum">
+                       <double>0.000000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>1000000000.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>1.000000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>1.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_62">
+                    <item>
+                     <widget class="QLabel" name="label_cfdDiaphramPosition_25">
+                      <property name="text">
+                       <string>c(of u_t + c u_x=0)</string>
+                      </property>
+                      <property name="buddy">
+                       <cstring>doubleSpinBox_cfdDiphrmPostn</cstring>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QDoubleSpinBox" name="doubleSpinBox_advecC">
+                      <property name="decimals">
+                       <number>6</number>
+                      </property>
+                      <property name="minimum">
+                       <double>0.000000000000000</double>
+                      </property>
+                      <property name="maximum">
+                       <double>1000000000.000000000000000</double>
+                      </property>
+                      <property name="singleStep">
+                       <double>0.100000000000000</double>
+                      </property>
+                      <property name="value">
+                       <double>1.000000000000000</double>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox_2">
+                  <property name="title">
+                   <string>GroupBox</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_9">
+                   <item>
+                    <layout class="QVBoxLayout" name="verticalLayout_13">
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_advecSin">
+                       <property name="text">
+                        <string>Sin</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_stepUp">
+                       <property name="text">
+                        <string>Step Up</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_stepDown">
+                       <property name="text">
+                        <string>Step Down</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="groupBox">
+                  <property name="title">
+                   <string>GroupBox</string>
+                  </property>
+                  <layout class="QHBoxLayout" name="horizontalLayout_10">
+                   <item>
+                    <layout class="QVBoxLayout" name="verticalLayout_14">
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_FTCS">
+                       <property name="text">
+                        <string>FTCS</string>
+                       </property>
+                       <property name="checkable">
+                        <bool>true</bool>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
+                       </property>
+                       <property name="autoRepeat">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_FTFS">
+                       <property name="text">
+                        <string>FTFS</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_FTBS">
+                       <property name="text">
+                        <string>FTBS</string>
+                       </property>
+                       <property name="checkable">
+                        <bool>true</bool>
+                       </property>
+                       <property name="checked">
+                        <bool>false</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_Upwind">
+                       <property name="text">
+                        <string>Upwind</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QRadioButton" name="radioButton_LaxWendroff">
+                       <property name="text">
+                        <string>LaxWendroff</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                  <zorder>radioButton_LaxWendroff</zorder>
+                  <zorder>radioButton_FTBS</zorder>
+                  <zorder>radioButton_Upwind</zorder>
+                  <zorder>radioButton_FTCS</zorder>
+                  <zorder>radioButton_FTFS</zorder>
+                  <zorder>groupBox_2</zorder>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_advecSimulate">
+                  <property name="text">
+                   <string>Run</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="verticalSpacer_6">
+                  <property name="orientation">
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </widget>
+          </item>
+          <item>
+           <spacer name="verticalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -1554,7 +1897,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1132</width>
+     <width>826</width>
      <height>25</height>
     </rect>
    </property>
@@ -1668,27 +2011,16 @@
   <tabstop>pushButton_Remove</tabstop>
   <tabstop>pushButton_toggleSimulation</tabstop>
   <tabstop>tabWidget_potInput</tabstop>
-  <tabstop>tabWidget_cfdInput</tabstop>
   <tabstop>doubleSpinBox_CFL</tabstop>
   <tabstop>doubleSpinBox_cfdLength</tabstop>
   <tabstop>doubleSpinBox_cfdDiphrmPostn</tabstop>
   <tabstop>doubleSpinBox_cfdcellNum</tabstop>
-  <tabstop>pushButton_cfdSimulate</tabstop>
   <tabstop>doubleSpinBox_cfduL</tabstop>
   <tabstop>doubleSpinBox_cfdpresR</tabstop>
-  <tabstop>doubleSpinBox_cfdpresL</tabstop>
   <tabstop>doubleSpinBox_cfdrhoR</tabstop>
-  <tabstop>doubleSpinBox_cfduR</tabstop>
-  <tabstop>doubleSpinBox_cfdrhoL</tabstop>
   <tabstop>doubleSpinBox_cfdtf</tabstop>
   <tabstop>doubleSpinBox_cfditrf</tabstop>
   <tabstop>doubleSpinBox_cfdgamma</tabstop>
-  <tabstop>doubleSpinBox_cfdminfsq</tabstop>
-  <tabstop>doubleSpinBox_cfdku</tabstop>
-  <tabstop>doubleSpinBox_cfdkp</tabstop>
-  <tabstop>doubleSpinBox_cfdalpha</tabstop>
-  <tabstop>doubleSpinBox_cfdsigma</tabstop>
-  <tabstop>doubleSpinBox_cfdbeta</tabstop>
   <tabstop>HLLC</tabstop>
   <tabstop>radioButton_2</tabstop>
   <tabstop>AUSMUp</tabstop>
