@@ -66,8 +66,15 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.graphicWidget.setParent(self)
 			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
 			self.verticalLayout = QVBoxLayout()
+			self.horizontalLayout = QHBoxLayout()
 			self.verticalLayout.addWidget(self.graphicWidget)
-			self.verticalLayout.addWidget(self.navigationTollBar)
+			self.horizontalLayout.addWidget(self.navigationTollBar)
+			self.pushButton_ClearPlot = QPushButton()
+			self.pushButton_ClearPlot.setObjectName("pushButton_ClearPlot")
+			self.horizontalLayout.addWidget(self.pushButton_ClearPlot)
+			self.pushButton_ClearPlot.setText("&Clear plot")
+			QObject.connect(self.pushButton_ClearPlot, SIGNAL("clicked()"), self.clearPlot)
+			self.verticalLayout.addLayout(self.horizontalLayout)
 			self.horizontalLayout_Main.addLayout(self.verticalLayout)
 			self.graphicWidget.show()
 			self.axisRange = array(self.graphicWidget.item.axis())
@@ -131,6 +138,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		# Plot the addes element in the figure widget
 		self.graphicWidget.plotPotElements([self.potLibrary.elements[-1]])
 		self.potResizeGraphicWindow()
+		if self.potStreakParticles != []: self.potAutoscaleAxis()
 		# Add this treeElement and potElement to the dictionary
 		self.elementTreeItemDict[self.treeWidgetItem] = self.potLibrary.elements[-1]
 		self.pushButton_Remove.setEnabled(True)
@@ -206,11 +214,9 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potSimulate(self):
 		""" SLOT for simulate button click """
+		if self.timer != None :
+			self.killTimer(self.timer)
 		self.clearPlot()
-		self.graphicWidget.plotPotElements(self.potLibrary.elements)
-		self.graphicWidget.item.set_autoscale_on(True)
-		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
-		self.graphicWidget.item.set_autoscale_on(False)
 		self.graphicWidget.fig.canvas.draw()
 		self.pushButton_toggleSimulation.setEnabled(True)
 		self.pushButton_toggleSimulation.setText("&Pause")
@@ -218,15 +224,14 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
 		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
-			self.potStreakParticles == [] :
+			if self.potStreakParticles == [] :
+				self.potAddDefaultStreakParticles()
 		elif (self.plotType == 'streamLines') and (self.potLibrary.elements != []):
 			self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
 			self.potAddStreamParticles()
 
 		# Start simulation in real time	
 		self.timerEvent(None)
-		if self.timer != None :
-			self.killTimer(self.timer)
 		self.timer = self.startTimer(0.001)
 
 	def potResizeGraphicWindow(self):
@@ -263,7 +268,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				self.killTimer(self.timer)
 			else :
 				self.count += 1
-		# to set auto scale on if axis limits are exceeded
+		self.potAutoscaleAxis()
+
+	def potAutoscaleAxis(self):
+		""" To set auto scale on if axis limits are exceeded"""
 		if self.plotType != "stremLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
@@ -274,7 +282,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.graphicWidget.item.axis(array(self.axisRange))
 			self.graphicWidget.fig.canvas.draw()
 		else :
-			self.graphicWidget.item.axis('equal')
+			#self.graphicWidget.item.axis('equal')
 			self.axisRange = self.graphicWidget.item.axis()
 
 	def potAdvectParticles(self, dt = 0.01, integType = 'euler'):
@@ -328,9 +336,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				position = center + radius*exp(1j*theta)
 				newParticle = particle(position.real, position.imag)
 				self.potStreakParticles.append(newParticle)
-		self.graphicWidget.item.set_autoscale_on(True)
 		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
-		self.graphicWidget.item.set_autoscale_on(False)
+		self.potAutoscaleAxis()
 		self.graphicWidget.fig.canvas.draw()
 
 	def potAddParticlesAt(self, startX, tag = 'X', noParticles = 30, yMin = -5.0, yMax = 5.0):
@@ -367,6 +374,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.item.cla()
 		self.graphicWidget.item.set_autoscale_on(False)
 		self.graphicWidget.item.grid(True)
+		if self.scope == 'potentialFlows':
+			self.graphicWidget.plotPotElements(self.potLibrary.elements)
+			self.graphicWidget.plotStreakParticles(self.potStreakParticles, plotType = 'point')
+			self.potAutoscaleAxis()
+		self.graphicWidget.fig.canvas.draw()
 
 	def potSetPlotScope(self):
 		""" Sets plot type and displays required input properties for that scope """

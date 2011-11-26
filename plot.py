@@ -26,15 +26,22 @@ class Plot(FigureCanvas):
 			if element.elementInfo['type'] != 'uniformFlow' :
 				self.item.plot(element.elementInfo['pos'].real, element.elementInfo['pos'].imag, self.colors[element.elementInfo['type']])
 
-	def plotStreakParticles(self, particles, tag = "pathLines"):
+	def plotStreakParticles(self, particles, tag = "pathLines", plotType='history'):
 		""" Initializing the plot of streak particles """
 		if tag == "streamLines": color = 'k-'
 		else : color = ''
 		self.plots = list(zeros(len(particles)))
-		for index in range(0, len(particles)):
-			xValues = [pos.real for pos in particles[index].history]
-			yValues = [pos.imag for pos in particles[index].history]
-			self.plots[index], = self.item.plot(xValues, yValues, color)
+		if plotType == 'history' :
+			for index in range(0, len(particles)):
+				xValues = [pos.real for pos in particles[index].history]
+				yValues = [pos.imag for pos in particles[index].history]
+				self.plots[index], = self.item.plot(xValues, yValues, color)
+		elif plotType == 'point' :
+			for index in range(0, len(particles)):
+				self.plots[index], = self.item.plot(particles[index].pos.real, particles[index].pos.imag, color)
+				particles[index].history = [particles[index].pos]
+		else :
+			raise NameError("Unknown plot type for streak particles")
 	
 	def clearStreakParticles(self):
 		""" Clear the plots corresponding to streak particles """
