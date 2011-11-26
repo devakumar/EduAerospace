@@ -208,7 +208,7 @@
                          <string>(X, Y)</string>
                         </property>
                         <property name="buddy">
-                         <cstring>doubleSpinBox_FlowAngle_OR_X</cstring>
+                         <cstring>doubleSpinBox_Y</cstring>
                         </property>
                        </widget>
                       </item>
@@ -230,7 +230,7 @@
                     <item>
                      <layout class="QHBoxLayout" name="horizontalLayout_15">
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_Y">
+                       <widget class="QDoubleSpinBox" name="doubleSpinBox_FlowAngle_OR_X">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -249,7 +249,7 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QDoubleSpinBox" name="doubleSpinBox_FlowAngle_OR_X">
+                       <widget class="QDoubleSpinBox" name="doubleSpinBox_Y">
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -1649,8 +1649,8 @@
   <tabstop>radioButton_Vortex</tabstop>
   <tabstop>radioButton_UniformFlow</tabstop>
   <tabstop>radioButton_potRandomElement</tabstop>
-  <tabstop>doubleSpinBox_Y</tabstop>
   <tabstop>doubleSpinBox_FlowAngle_OR_X</tabstop>
+  <tabstop>doubleSpinBox_Y</tabstop>
   <tabstop>doubleSpinBox_Strength</tabstop>
   <tabstop>pushButton_Add</tabstop>
   <tabstop>pushButton_Clear</tabstop>

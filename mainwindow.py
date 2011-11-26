@@ -44,6 +44,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.pushButton_Clear, SIGNAL("clicked()"), self.potClearData)
 		QObject.connect(self.pushButton_Simulate, SIGNAL("clicked()"), self.potSimulate)
 		QObject.connect(self.pushButton_toggleSimulation, SIGNAL("clicked()"), self.toggleSimulation)
+		QObject.connect(self.pushButton_potAddpatch, SIGNAL("clicked()"), self.potAddStreakParticles)
 		QObject.connect(self.radioButton_Source, SIGNAL("clicked()"), self.potSourceSelected)
 		QObject.connect(self.radioButton_Sink, SIGNAL("clicked()"), self.potSinkSelected)
 		QObject.connect(self.radioButton_Doublet, SIGNAL("clicked()"), self.potDoubletSelected)
@@ -70,6 +71,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.horizontalLayout_Main.addLayout(self.verticalLayout)
 			self.graphicWidget.show()
 			self.axisRange = array(self.graphicWidget.item.axis())
+			self.comboBox_pathLines.setCurrentIndex(1)
+			self.comboBox_pathLines.setCurrentIndex(0)
 		elif self.scope == 'cfd' :
 			self.InputCFD_Dock.setHidden(False)
 			self.InputPotentialFlows_Dock.setHidden(True)
@@ -205,6 +208,9 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		""" SLOT for simulate button click """
 		self.clearPlot()
 		self.graphicWidget.plotPotElements(self.potLibrary.elements)
+		self.graphicWidget.item.set_autoscale_on(True)
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
+		self.graphicWidget.item.set_autoscale_on(False)
 		self.graphicWidget.fig.canvas.draw()
 		self.pushButton_toggleSimulation.setEnabled(True)
 		self.pushButton_toggleSimulation.setText("&Pause")
@@ -212,8 +218,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
 		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
-			self.potStreakParticles = []
-			self.potAddStreakParticles()
+			self.potStreakParticles == [] :
 		elif (self.plotType == 'streamLines') and (self.potLibrary.elements != []):
 			self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
 			self.potAddStreamParticles()
@@ -229,7 +234,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potElemRange = self.potLibrary.getRange()
 		if (self.potElemRange != None) and (abs(array(self.potElemRange)) > abs(array(self.graphicWidget.defalutRange))).any() :
 			maxLim = max(abs(array(self.potElemRange)))
-			additional = array([-maxLim*3 - 5, maxLim*3 + 5, -maxLim*3 -5, maxLim*3 + 5])
+			additional = array([-maxLim*1.5 - 5, maxLim*1.5 + 5, -maxLim*1.5 -5, maxLim*1.5 + 5])
 			self.graphicWidget.item.axis(array(self.potElemRange) + additional)
 			self.graphicWidget.fig.canvas.draw()
 			self.axisRange = array(self.graphicWidget.item.axis())
@@ -259,8 +264,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			else :
 				self.count += 1
 		# to set auto scale on if axis limits are exceeded
-		self.graphicWidget.item.axis('equal')
-		self.axisRange = self.graphicWidget.item.axis()
 		if self.plotType != "stremLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
@@ -270,6 +273,9 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			if max(yRange) > self.axisRange[3]: self.axisRange += array([0, 0, 0, max(yRange) -self.axisRange[3]])
 			self.graphicWidget.item.axis(array(self.axisRange))
 			self.graphicWidget.fig.canvas.draw()
+		else :
+			self.graphicWidget.item.axis('equal')
+			self.axisRange = self.graphicWidget.item.axis()
 
 	def potAdvectParticles(self, dt = 0.01, integType = 'euler'):
 		""" Advect the particles for a given time step """
@@ -298,12 +304,47 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.timer = self.startTimer(0.001)
 			self.pushButton_toggleSimulation.setText("&Pause")
 
-	def potAddStreakParticles(self):
-		""" Add specified streal particles """
-		self.potAddParticlesAtX( self.axisRange[0])
+	def potAddDefaultStreakParticles(self):
+		""" Add specified streak particles """
+		self.potAddDefaultParticlesAtX( self.axisRange[0])
 		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 
-	def potAddParticlesAtX(self, startX, n = 30):
+	def potAddStreakParticles(self):
+		""" Add specified streak particles """
+		patchType = self.comboBox_pathLines.currentText()
+		if patchType == 'Square':
+			center = complex(self.doubleSpinBox_centerX.value(), self.doubleSpinBox_centerY.value())
+			length = self.doubleSpinBox_patchInfo1.value()
+			minCoord = center - 1j*length/2.0
+			maxCoord = center + 1j*length/2.0
+			self.potAddParticlesAt(minCoord.real - length/2.0, yMin = minCoord.imag, yMax = maxCoord.imag, tag = 'X')
+			self.potAddParticlesAt(maxCoord.real + length/2.0, yMin = minCoord.imag, yMax = maxCoord.imag, tag = 'X')
+			self.potAddParticlesAt(minCoord.imag, yMin = minCoord.real - length/2.0, yMax = maxCoord.real + length/2.0, tag = 'Y')
+			self.potAddParticlesAt(maxCoord.imag, yMin = minCoord.real - length/2.0, yMax = maxCoord.real + length/2.0, tag = 'Y')
+		elif patchType == 'Circular' :
+			center = complex(self.doubleSpinBox_centerX.value(), self.doubleSpinBox_centerY.value())
+			radius = self.doubleSpinBox_patchInfo1.value()
+			for theta in linspace(0, 2*pi, 180):
+				position = center + radius*exp(1j*theta)
+				newParticle = particle(position.real, position.imag)
+				self.potStreakParticles.append(newParticle)
+		self.graphicWidget.item.set_autoscale_on(True)
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
+		self.graphicWidget.item.set_autoscale_on(False)
+		self.graphicWidget.fig.canvas.draw()
+
+	def potAddParticlesAt(self, startX, tag = 'X', noParticles = 30, yMin = -5.0, yMax = 5.0):
+		""" Adds particles at x """
+		if int(abs(yMax - yMin)) > noParticles :
+			noParticles = int(abs(yMax - yMin))
+		for yCoord in linspace(yMin, yMax, noParticles) :
+			if tag == 'X': newParticle = particle(startX, yCoord)
+			elif tag == 'Y': newParticle = particle(yCoord, startX)
+			else :
+				raise NameError("Unknown tag for adding the particles")
+			self.potStreakParticles.append(newParticle)
+
+	def potAddDefaultParticlesAtX(self, startX, n = 30):
 		""" Adds particles at x """
 		widthY = abs(self.axisRange[3] - self.axisRange[2])
 		elementsWidth = abs(self.potElemRange[3] - self.potElemRange[2])
@@ -336,6 +377,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		elif (self.radioButton_PathLines.isChecked()):
 			self.plotType = 'pathLines'
 			self.potSetPatchInVisibility(False)
+			self.comboBox_pathLines.setCurrentIndex(1)
+			self.comboBox_pathLines.setCurrentIndex(0)
 		else :
 			pass
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui/mainwindow.ui'
 #
-# Created: Wed Nov 23 02:09:36 2011
+# Created: Sat Nov 26 03:49:38 2011
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -113,17 +113,6 @@ class Ui_MainWindow(object):
         self.horizontalLayout_13.addItem(spacerItem1)
         self.horizontalLayout_15 = QtGui.QHBoxLayout()
         self.horizontalLayout_15.setObjectName("horizontalLayout_15")
-        self.doubleSpinBox_Y = QtGui.QDoubleSpinBox(self.tab_potInput)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.doubleSpinBox_Y.sizePolicy().hasHeightForWidth())
-        self.doubleSpinBox_Y.setSizePolicy(sizePolicy)
-        self.doubleSpinBox_Y.setMinimum(-10000.0)
-        self.doubleSpinBox_Y.setMaximum(10000.0)
-        self.doubleSpinBox_Y.setSingleStep(0.1)
-        self.doubleSpinBox_Y.setObjectName("doubleSpinBox_Y")
-        self.horizontalLayout_15.addWidget(self.doubleSpinBox_Y)
         self.doubleSpinBox_FlowAngle_OR_X = QtGui.QDoubleSpinBox(self.tab_potInput)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -135,6 +124,17 @@ class Ui_MainWindow(object):
         self.doubleSpinBox_FlowAngle_OR_X.setSingleStep(0.1)
         self.doubleSpinBox_FlowAngle_OR_X.setObjectName("doubleSpinBox_FlowAngle_OR_X")
         self.horizontalLayout_15.addWidget(self.doubleSpinBox_FlowAngle_OR_X)
+        self.doubleSpinBox_Y = QtGui.QDoubleSpinBox(self.tab_potInput)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.doubleSpinBox_Y.sizePolicy().hasHeightForWidth())
+        self.doubleSpinBox_Y.setSizePolicy(sizePolicy)
+        self.doubleSpinBox_Y.setMinimum(-10000.0)
+        self.doubleSpinBox_Y.setMaximum(10000.0)
+        self.doubleSpinBox_Y.setSingleStep(0.1)
+        self.doubleSpinBox_Y.setObjectName("doubleSpinBox_Y")
+        self.horizontalLayout_15.addWidget(self.doubleSpinBox_Y)
         self.horizontalLayout_13.addLayout(self.horizontalLayout_15)
         self.verticalLayout_9.addLayout(self.horizontalLayout_13)
         self.horizontalLayout_17 = QtGui.QHBoxLayout()
@@ -670,7 +670,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menu_File.menuAction())
         self.menubar.addAction(self.menu_Aerodynamics.menuAction())
         self.menubar.addAction(self.menu_Window.menuAction())
-        self.label_X.setBuddy(self.doubleSpinBox_FlowAngle_OR_X)
+        self.label_X.setBuddy(self.doubleSpinBox_Y)
         self.label_Strength.setBuddy(self.doubleSpinBox_Strength)
         self.label_patchInfo1.setBuddy(self.doubleSpinBox_patchInfo2)
         self.label_cfl.setBuddy(self.doubleSpinBox_CFL)
@@ -711,9 +711,9 @@ class Ui_MainWindow(object):
         MainWindow.setTabOrder(self.radioButton_Doublet, self.radioButton_Vortex)
         MainWindow.setTabOrder(self.radioButton_Vortex, self.radioButton_UniformFlow)
         MainWindow.setTabOrder(self.radioButton_UniformFlow, self.radioButton_potRandomElement)
-        MainWindow.setTabOrder(self.radioButton_potRandomElement, self.doubleSpinBox_Y)
-        MainWindow.setTabOrder(self.doubleSpinBox_Y, self.doubleSpinBox_FlowAngle_OR_X)
-        MainWindow.setTabOrder(self.doubleSpinBox_FlowAngle_OR_X, self.doubleSpinBox_Strength)
+        MainWindow.setTabOrder(self.radioButton_potRandomElement, self.doubleSpinBox_FlowAngle_OR_X)
+        MainWindow.setTabOrder(self.doubleSpinBox_FlowAngle_OR_X, self.doubleSpinBox_Y)
+        MainWindow.setTabOrder(self.doubleSpinBox_Y, self.doubleSpinBox_Strength)
         MainWindow.setTabOrder(self.doubleSpinBox_Strength, self.pushButton_Add)
         MainWindow.setTabOrder(self.pushButton_Add, self.pushButton_Clear)
         MainWindow.setTabOrder(self.pushButton_Clear, self.radioButton_PathLines)
