@@ -47,6 +47,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.pushButton_Simulate, SIGNAL("clicked()"), self.potSimulate)
 		QObject.connect(self.pushButton_toggleSimulation, SIGNAL("clicked()"), self.toggleSimulation)
 		QObject.connect(self.pushButton_potAddpatch, SIGNAL("clicked()"), self.potAddStreakParticles)
+		QObject.connect(self.pushButton_potRemoveTracers, SIGNAL("clicked()"), self.potRemoveSreakParticles)
 		QObject.connect(self.radioButton_Source, SIGNAL("clicked()"), self.potSourceSelected)
 		QObject.connect(self.radioButton_Sink, SIGNAL("clicked()"), self.potSinkSelected)
 		QObject.connect(self.radioButton_Doublet, SIGNAL("clicked()"), self.potDoubletSelected)
@@ -322,10 +323,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potAutoscaleAxis()
 		self.graphicWidget.fig.canvas.draw()
 
-	def potAddParticlesAt(self, startX, tag = 'X', noParticles = 30, yMin = -5.0, yMax = 5.0):
+	def potAddParticlesAt(self, startX, tag = 'X', noParticles = 3, yMin = -5.0, yMax = 5.0):
 		""" Adds particles at x """
-		if int(abs(yMax - yMin)) > noParticles :
-			noParticles = int(abs(yMax - yMin))
+		newNoParticles = 2*(int(abs(yMax - yMin)) + 1)
+		if newNoParticles > noParticles :
+			noParticles = newNoParticles
 		for yCoord in linspace(yMin, yMax, noParticles) :
 			if tag == 'X': newParticle = particle(startX, yCoord)
 			elif tag == 'Y': newParticle = particle(yCoord, startX)
@@ -350,6 +352,13 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		for yCoord in linspace(self.potElemRange[3] + elementsWidth/3.0, self.axisRange[3] - 0.5, noParticles/4) :
 			newParticle = particle(startX, yCoord)
 			self.potStreakParticles.append(newParticle)
+
+	def potRemoveSreakParticles(self):
+		""" Removes all streak particles """
+		self.potStreakParticles = []
+		self.potResizeGraphicWindow()
+		self.clearPlot()
+		self.graphicWidget.fig.canvas.draw()
 	
 	def clearPlot(self):
 		"""  Clears the plot window without changing the axis limits """
@@ -398,8 +407,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
-			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
-			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.0)
+			self.doubleSpinBox_patchInfo1.setSingleStep(1.0)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("length")
 		elif patchType == 'Circular':
@@ -408,8 +417,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.doubleSpinBox_centerY.setHidden(False)
 			self.label_patchInfo1.setHidden(False)
 			self.doubleSpinBox_patchInfo1.setHidden(False)
-			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
-			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.0)
+			self.doubleSpinBox_patchInfo1.setSingleStep(1.0)
 			self.doubleSpinBox_patchInfo2.setHidden(True)
 			self.label_patchInfo1.setText("Radius")
 		elif patchType == 'Line at X' or patchType == 'Line at Y':
@@ -423,10 +432,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			elif patchType == 'Line at Y': self.label_patchInfo1.setText("At Y ")
 		elif patchType == 'Rectangular':
 			self.potSetPatchInVisibility(False)
-			self.doubleSpinBox_patchInfo1.setMinimum(0.1)
-			self.doubleSpinBox_patchInfo1.setSingleStep(0.1)
-			self.doubleSpinBox_patchInfo2.setMinimum(0.1)
-			self.doubleSpinBox_patchInfo2.setSingleStep(0.1)
+			self.doubleSpinBox_patchInfo1.setMinimum(0.0)
+			self.doubleSpinBox_patchInfo1.setSingleStep(1.0)
+			self.doubleSpinBox_patchInfo2.setMinimum(0.0)
+			self.doubleSpinBox_patchInfo2.setSingleStep(1.0)
 			self.label_patchInfo1.setText("(l, b)")
 		else :
 			pass
