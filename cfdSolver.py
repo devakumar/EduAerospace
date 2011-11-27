@@ -71,7 +71,12 @@ class cfdSolver(object):
 		self.u_r = statesInfo['u_r']
 		self.p_r = statesInfo['p_r']
 		self.gamma= statesInfo['gamma']
-
+		self.rho_initial = numpy.zeros((self.numCells+2))
+		self.u_initial =  numpy.zeros((self.numCells+2))
+		self.p_initial = numpy.zeros((self.numCells+2))
+		self.rho = numpy.zeros((self.numCells+2))
+		self.u =  numpy.zeros((self.numCells+2))
+		self.p = numpy.zeros((self.numCells+2))
 		self.netflux=numpy.zeros((self.numCells+2,3))
 		self.U   =  numpy.zeros((self.numCells+2,3))
 		self.fi   =  numpy.zeros((self.numCells+2,3))
@@ -80,7 +85,7 @@ class cfdSolver(object):
 		self.dt=1.0
 		self.t=0.0
 		self.ei=0.0000001
-
+		self.schemes = schemes()
 		pass
 
 	def grid(self):
@@ -98,30 +103,23 @@ class cfdSolver(object):
 		while i<=self.numCells :
 			if self.length >= self.diphrmPostn :
 				if self.x[i]<= self.diphrmPostn :
-					rho_initial = self.rho_l
-					u_initial =  self.u_l      
-					p_initial = self.p_l       
+					self.rho_initial[i] = self.rho_l
+					self.u_initial[i] =  self.u_l      
+					self.p_initial[i] = self.p_l       
 				elif self.x[i]<=self.length :                         
-					rho_initial = self.rho_r   
-					u_initial = self.u_r       
-					p_initial = self.p_r       
+					self.rho_initial[i] = self.rho_r   
+					self.u_initial[i] = self.u_r       
+					self.p_initial[i] = self.p_r       
 			elif self.length <= self.diphrmPostn :
 				print "Position of Diagphram should be less in lenght range"
 		
-			e_initial = 0.5 * rho_initial * u_initial * u_initial + ( p_initial/(gamma-1)   )     #/*Energy*/
+			e_initial = 0.5 * self.rho_initial[i] * self.u_initial[i] * self.u_initial[i] + ( self.p_initial[i]/(self.gamma-1)   )     #/*Energy*/
 
-			self.U[i][0] = rho_initial                      #/*Conserved variable 1*/    
-			self.U[i][1] = rho_initial * u_initial         #/*Conserved variable 1*/  
+			self.U[i][0] = self.rho_initial[i]                      #/*Conserved variable 1*/    
+			self.U[i][1] = self.rho_initial[i] * self.u_initial[i]         #/*Conserved variable 1*/  
 			self.U[i][2] = e_initial                       # /*Conserved variable 1*/  
 			i=i+1
-	def boundaryCondtn(self):
-		self.U[0][0] = self.U[1][0]
-		self.U[0][1] = self.U[1][1]
-		self.U[0][2] = self.U[1][2]
 
-		self.U[self.numCells+1][0] = self.U[self.numCells][0]
-		self.U[self.numCells+1][1] = self.U[self.numCells][1]
-		self.U[self.numCells+1][2] = self.U[self.numCells][2]
 
 	def update(self):
 		i=1
@@ -152,25 +150,6 @@ class cfdSolver(object):
 				tempumax=math.fabs(  (self.ui-ai)  )
 			i=i+1
 		return tempumax
-	def flux(self):
-		i=0
-		self.schemes = schemes()
-		while i<=self.numCells:
-			self.fi[i]= self.schemes.vanleer(Ui=self.U[i],Ui1=self.U[i+1] )
-			#print "  vanleer: ", fi[i],
-			#print U[i]," ",U[i+1]," ",fi[i]
-			#fi[i]= schemes.stegerwarming(U[i],U[i+1] )
-			#fi[i]= schemes.HLLC(U[i],U[i+1] )
-			#print U[i]," ",U[i+1]," ",fi[i]
-			i=i+1  
-		#print " ",fi
-		i=1
-		while i<=self.numCells:
-			self.netflux[i][0]= self.fi[i-1][0]-self.fi[i][0]
-			self.netflux[i][1]= self.fi[i-1][1]-self.fi[i][1]
-			self.netflux[i][2]= self.fi[i-1][2]-self.fi[i][2]
-			i=i+1
-		#print " Calc",netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
 	def output(self):	
 		scheme="vanleer"
 		#scheme="stegerwarming"
@@ -223,47 +202,17 @@ class cfdSolver(object):
 		#figure(2)
 		#plot(self.x[1:self.numCells],self.pi[1:self.numCells])
 		#show()
-		pass
+		i=0
+		while i<=(self.numCells+1):
+			self.rho[i]= self.U[i][0]
+			self.u[i] =(self.U[i][1])/self.ri
+			self.p[i]= ( (self.U[i][2]-(0.5*self.u[i]*self.u[i]*self.rho[i]))*(self.gamma-1)) 
+			i+=1
+
 	def read_data(self):
 		pass
 
-	def main(self):
-		print "COMing In"
-		self.read_data()
-		self.grid()
-#		print " ri ",self.ri, " PI ",pi, " ui",ui
-		self.initialisation()
-		self.boundaryCondtn()
-		#pltoutpt()
-		self.t =0.0
-		self.itr=0
-#		print self.x
-#		print "t ",self.t,"itr",self.itr
-#		print " ri ",self.ri,
-#		print " PI ",pi, " ui",ui
-		#while(t<self.tf):
-		while(self.itr<self.itrf):
-			self.flux()
-			umax = self.maxofu()
-			self.dt=  1.0 *self.cfl* self.dx/umax
-			self.update()
-			print " ri ",self.ri,
-			self.boundaryCondtn()
-			self.itr=self.itr+1
-			self.t=self.t+self.dt
 
-			self.plt()
-			print "t ",self.t,"itr",self.itr
-			#print "DTIMe", dt
-			#print "For itr ",itr," The time is",t," and dt is",dt
-			#print U[49][0],"  ",U[49][1],"  ",U[49][2]," \t ",U[50][0]," ",U[50][1]," ",U[50][2],"\t ",U[51][0]," ",U[51][1]," ",U[51][2]
-			#print netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
-
-		print " Time Final", self.t
-		#self.output()
-		print " x ",self.x," ri ",self.ri,
-		self.plt()
-		print " Time Final", self.t
 #	main()
 
 
@@ -408,7 +357,7 @@ class schemes(object):
 			fi[i] = fpi[i]+fni1[i]
 
 		return fi
-	def ausm(Ui,Ui1):
+	def ausm(self,Ui,Ui1):
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
 		fi   = numpy.array([0.0,0.0,0.0])
@@ -418,12 +367,14 @@ class schemes(object):
 		ri   =Ui[0]
 		ui   =(Ui[1])/ri
 		pi   =((Ui[2]-(0.5*ui*ui*ri))*(gamma-1))
+		print "pi: ",pi,"ri: ",ri
 		ai   =math.sqrt((gamma*pi)/ri )    
 		mi   = ui/ai
 
 		ri1  =Ui1[0]
 		ui1  =(Ui1[1])/ri1
 		pi1  =((Ui1[2]-(0.5*ui1*ui1*ri1))*(gamma-1))
+		print "pi1: ",pi1,"ri1: ",ri1
 		ai1  = math.sqrt((gamma*pi1)/ri1 )   
 		mi1  = ui1/ai1
 
@@ -445,15 +396,15 @@ class schemes(object):
 	
 
 		if(math.fabs(mi1) < (1.0+ e) ):
-			mpi1=.25* (m1i+1.0)*(mi1+1.0)
+			mpi1=.25* (mi1+1.0)*(mi1+1.0)
 			mni1=  -1.0*.25* (mi1-1.0)*(mi1-1.0)
 			ppi1= .5* pi1 *( 1.0+ mi1)
-			#pni1=.5 * pi1* ( 1.0-mi1)
+			pni1=.5 * pi1* ( 1.0-mi1)
 
 		else :
 			mpi1= 0.5* (mi1+math.fabs(mi1) )
 			mni1=0.5* (mi1-math.fabs(mi1) )		
-			#ppi1= 0.5*pi1* (mi1+math.fabs(mi1) )/mi1
+			ppi1= 0.5*pi1* (mi1+math.fabs(mi1) )/mi1
 			pni1= 0.5*pi1* (mi1-math.fabs(mi1) )/mi1
 
 		fc1[0]= (ri1 * ai1 )
@@ -468,49 +419,49 @@ class schemes(object):
 
 		return fi
 
-	def mchfnc1plus( m):
+	def mchfnc1plus(self, m):
 		return( ( .5* (m+math.fabs(m)) ))
 
-	def mchfnc1minus( m):
+	def mchfnc1minus(self, m):
 		return( ( .5* (m-math.fabs(m)) ) )
 
-	def mchfnc2plus( m):
+	def mchfnc2plus( self,m):
 		return( ( 0.25* (m+1.0)*(m+1.0) ) )
 
-	def mchfnc2minus( m):
+	def mchfnc2minus( self,m):
 		return( ( -0.25* (m-1.0)*(m-1.0) ) )
 
-	def mchfnc4plus( m):
+	def mchfnc4plus(self, m):
 		if(math.fabs(m) > 1.0-e):
-			kc= mchfnc1plus(m) 
+			kc= self.mchfnc1plus(m) 
 		else:
-			kc= (mchfnc2plus(m) * (1.0-(16.0*self.beta*mchfnc2minus(m) ) ) )
+			kc= (self.mchfnc2plus(m) * (1.0-(16.0*self.beta*self.mchfnc2minus(m) ) ) )
 		return( kc)
 
-	def mchfnc4minus( m):
+	def mchfnc4minus( self,m):
 		if(math.fabs(m) > 1.0-e) :
-			kc= mchfnc1minus(m) 
+			kc= self.mchfnc1minus(m) 
 		else :
-			kc= (mchfnc2minus(m) * (1.0+(16.0*self.beta*mchfnc2plus(m) ) ) )
+			kc= (self.mchfnc2minus(m) * (1.0+(16.0*self.beta*self.mchfnc2plus(m) ) ) )
 		return( kc)
 
 
-	def prsfnc5plus(  m):
+	def prsfnc5plus(  self,m):
 		if (m> 1.0-e) :
 			kc= 0.5* (m+math.fabs(m) )/m
 		else:
-			kc=  mchfnc2plus(m) *( (2.0-m)- 16.0* self.alpha* m* mchfnc2minus(m) )
+			kc=  self.mchfnc2plus(m) *( (2.0-m)- 16.0* self.alpha* m* self.mchfnc2minus(m) )
 		return (kc)
 	
-	def prsfnc5minus( m):
+	def prsfnc5minus( self,m):
 		if (m> 1.0-e) :
 			kc= 0.5* (m-math.fabs(m) )/m
 		else:
-			kc=  mchfnc2minus(m) *( (-2.0-m)+ 16.0* self.alpha* m* mchfnc2plus(m) )
+			kc=  self.mchfnc2minus(m) *( (-2.0-m)+ 16.0* self.alpha* m* self.mchfnc2plus(m) )
 		return kc
 
 
-	def ausmplus(Ui,Ui1):
+	def ausmplus(self,Ui,Ui1):
 
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
@@ -543,11 +494,11 @@ class schemes(object):
 		mchli= ui/ahalfi
 		mchri=ui1/ahalfi
 
-		mhalfi=( mchfnc4plus(mchli)  ) +   (mchfnc4minus(mchri) )
+		mhalfi=( self.mchfnc4plus(mchli)  ) +   (self.mchfnc4minus(mchri) )
 		mchphalfi= .5* (mhalfi+math.fabs(mhalfi) )
 		mchnhalfi= .5* (mhalfi-math.fabs(mhalfi) )
 
-		phalfi= ( prsfnc5plus(mchli) *pi   )+ ( prsfnc5minus(mchri) *pi1 )
+		phalfi= ( self.prsfnc5plus(mchli) *pi   )+ ( self.prsfnc5minus(mchri) *pi1 )
 	
 		#ahalfi= (ai+ai1)/2.0		 #Up
 
@@ -557,7 +508,7 @@ class schemes(object):
 
 		return fi
 
-	def AUSMup(Ui,Ui1):
+	def AUSMup(self,Ui,Ui1):
 		fi   = numpy.array([0,0,0])
 
 		ri   =Ui[0]
@@ -592,14 +543,14 @@ class schemes(object):
 			fami= .4
 
 		fapi= (math.fabs( math.sqrt(  ( 4.0+ (16.0*self.alpha/3.0) )  )  ) )/5.0 
-		mhalfi=( mchfnc4plus(mchli)  ) +   (mchfnc4minus(mchri) ) -( ( self.kp* (max( (1.0- (self.sigma*mnotsqi) ),0)   ) *(pi1-pi) *2 )/ (fami *ahalfi*ahalfi* (ri+ri1) ) ) 
+		mhalfi=( self.mchfnc4plus(mchli)  ) +   (self.mchfnc4minus(mchri) ) -( ( self.kp* (max( (1.0- (self.sigma*mnotsqi) ),0)   ) *(pi1-pi) *2 )/ (fami *ahalfi*ahalfi* (ri+ri1) ) ) 
 
 		if(mhalfi>0):
 			massdoti= ahalfi* mhalfi* ri
 		else:
 			massdoti=ahalfi* mhalfi* ri1
 
-		phalfi= ( prsfnc5plus(mchli) *pi   )+ ( prsfnc5minus(mchri) *pi1 )- ( self.ku*prsfnc5plus(mchli)*prsfnc5minus(mchri)*(ri+ri1) * fapi* (ui1-ui) *ahalfi )
+		phalfi= ( self.prsfnc5plus(mchli) *pi   )+ ( self.prsfnc5minus(mchri) *pi1 )- ( self.ku*self.prsfnc5plus(mchli)*self.prsfnc5minus(mchri)*(ri+ri1) * fapi* (ui1-ui) *ahalfi )
 
 		if massdoti>=0 :
 			fi[0]=   ( massdoti)
@@ -611,7 +562,7 @@ class schemes(object):
 			fi[2]=   ( massdoti*( ( .5*ui1*ui1 ) + gamma*pi1/ ( (gamma-1)*ri1 ) )  )
 		return fi
 
-	def HLL(Ui,Ui1):
+	def HLL(self,Ui,Ui1):
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
 		fi   = numpy.array([0.0,0.0,0.0])
@@ -655,7 +606,7 @@ class schemes(object):
 			fi[2]= ri1* ai1* ai1* ai1 *mi1 *(.5 *mi1 *mi1+ (    1 /(gamma - 1)  ) )
 
 		return fi
-	def HLLC(Ui,Ui1):
+	def HLLC(self,Ui,Ui1):
 		fpi  = numpy.array([0.0,0.0,0.0])
 		fni1 = numpy.array([0.0,0.0,0.0])
 		fi   = numpy.array([0.0,0.0,0.0])
@@ -701,8 +652,13 @@ class schemes(object):
 
 		temp1 = ui1 + ai1
 		temp2 = uroe + aroe
-	
+		
+		ul=ui
+		pl=pi
+		el=ei
+		
 		ur=ui1
+		er =ei1
 		pr=pi1
 		
 		if(temp1>temp2):

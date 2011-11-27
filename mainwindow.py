@@ -14,6 +14,7 @@ from PyQt4.QtCore import *
 from potentialLibrary import *
 from plot import *
 from math import *
+from numpy import *
 from ui import ui_mainwindow
 from cfdSolver import *
 import time
@@ -58,7 +59,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
 		QObject.connect(self.pushButton_cfdSimulate, SIGNAL("clicked()"), self.cfdSimulate)
 		QObject.connect(self.pushButton_advecSimulate, SIGNAL("clicked()"), self.advecSimulate)
-
+		QObject.connect(self.pushButton_burgSimulate, SIGNAL("clicked()"), self.burgSimulate)
 
 		if self.scope == 'potentialFlows' :
 			self.InputPotentialFlows_Dock.setHidden(False)
@@ -490,7 +491,35 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.potAutoscaleAxis()
 		if self.scope == 'cfd':
 			if self.cfdSimulatescope =='shock':
-				pass
+				if self.cfdSolver.itr>self.cfdSolver.itrf :
+						self.killTimer(self.timer)
+				else:
+					self.clearPlot()
+					self.cfdflux()
+					umax = self.cfdSolver.maxofu()
+					self.cfdSolver.dt=  1.0 *self.cfdSolver.cfl* self.cfdSolver.dx/umax
+					self.cfdSolver.update()
+					print " ri ",self.cfdSolver.ri,
+					self.shockboundaryCondtn()
+					self.cfdSolver.itr=self.cfdSolver.itr+1
+					self.cfdSolver.t=self.cfdSolver.t+self.cfdSolver.dt
+					self.cfdSolver.plt()
+					print "t ",self.cfdSolver.t,"itr",self.cfdSolver.itr
+					self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
+					self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'b')
+					self.graphicWidget.fig.canvas.draw()
+
+			elif self.cfdSimulatescope=='burg':
+				if self.timeElapsed > self.totalTime:
+						self.killTimer(self.timer)
+				else:
+					self.clearPlot()
+					self.burgItr()
+					self.graphicWidget.item.plot(self.x,self.uinit,'r')
+					self.graphicWidget.item.plot(self.x,self.u,'k')
+					self.graphicWidget.fig.canvas.draw()
+
+				
 			else:
 				if self.t > self.itr:
 						self.killTimer(self.timer)
@@ -507,30 +536,54 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 	def cfdSimulate(self):
 		self.cfdSimulatescope='shock'
 		self.clearPlot()
-		self.cfdInput()
-		lst=[0.5,0.5,self.cfdInput['cfl'],self.cfdInput['length'],self.cfdInput['diphrmPostn'],self.cfdInput['numCells'] ]
-		#self.graphicWidget.item.plot(lst,'or')
+		self.cfdInputfnc()
 		self.graphicWidget.item.set_autoscale_on(True)
 		self.graphicWidget.fig.canvas.draw()
 		self.cfdSolver = cfdSolver(self.cfdInput)
-		self.cfdSolver.main()
+		self.cfdSolver.read_data()
+		self.cfdSolver.grid()
+		self.cfdSolver.initialisation()
+		self.shockboundaryCondtn()
+		self.cfdSolver.t =0.0
+		self.cfdSolver.itr=0
+		self.timerEvent(None)
+		self.timer = self.startTimer(self.doubleSpinBox_shockTimer.value()*1000)
+		
+		
+		
+		
+		
+		
+		
+			#print "DTIMe", dt
+			#print "For itr ",itr," The time is",t," and dt is",dt
+			#print U[49][0],"  ",U[49][1],"  ",U[49][2]," \t ",U[50][0]," ",U[50][1]," ",U[50][2],"\t ",U[51][0]," ",U[51][1]," ",U[51][2]
+			#print netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
+
+#		print " Time Final", self.cfdSolver.t
+#		#self.output()
+#		print " x ",self.x," ri ",self.cfdSolver.ri,
+#		self.plt()
+#		print " Time Final", self.t
+		
+		
 #		self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.ri,'r')
-		temp1rho=[]
-		temp2ui=[]
-		temp3pi=[]
-		xplt=[]
-		for i in range(int(self.cfdInput['numCells']) ):
-			xplt.append(self.cfdSolver.x[i] ) 
-			temp1= self.cfdSolver.U[i][0]
-			temp1rho.append(temp1)
-			temp2 =(self.cfdSolver.U[i][1])/temp1
-			temp2ui.append(temp2 )
-			temp3pi.append( ((self.cfdSolver.U[i][2]-(0.5*temp2*temp2*temp1))*(self.cfdInput['gamma']-1))  )
-		self.graphicWidget.item.plot(xplt,temp1rho,'r')
-		self.graphicWidget.item.plot(xplt,temp2ui,'g')
-		self.graphicWidget.item.plot(xplt,temp3pi,'b')
-		self.graphicWidget.item.set_xlim(0,self.cfdInput['length'])
-	def cfdInput(self):
+#		temp1rho=[]
+#		temp2ui=[]
+#		temp3pi=[]
+#		xplt=[]
+#		for i in range(int(self.cfdInput['numCells']) ):
+#			xplt.append(self.cfdSolver.x[i] ) 
+#			temp1= self.cfdSolver.U[i][0]
+#			temp1rho.append(temp1)
+#			temp2 =(self.cfdSolver.U[i][1])/temp1
+#			temp2ui.append(temp2 )
+#			temp3pi.append( ((self.cfdSolver.U[i][2]-(0.5*temp2*temp2*temp1))*(self.cfdInput['gamma']-1))  )
+#		self.graphicWidget.item.plot(xplt,temp1rho,'r')
+#		self.graphicWidget.item.plot(xplt,temp2ui,'g')
+#		self.graphicWidget.item.plot(xplt,temp3pi,'b')
+#		self.graphicWidget.item.set_xlim(0,self.cfdInput['length'])
+	def cfdInputfnc(self):
 		cfl = self.doubleSpinBox_CFL.value()
 		cfdLength = self.doubleSpinBox_cfdLength.value()
 		cfdDiphrmPostn = self.doubleSpinBox_cfdDiphrmPostn.value()
@@ -553,6 +606,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		itrf = self.doubleSpinBox_cfditrf.value()
 		cfdcellNum = self.doubleSpinBox_cfdcellNum.value()
 		gamma = self.doubleSpinBox_cfdgamma.value()
+		
 		
 		self.cfdInput={}
 		self.cfdInput['cfl']=cfl
@@ -578,6 +632,66 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.cfdInput['itrf']= itrf
 		self.cfdInput['gamma'] = gamma
 		
+
+	def cfdflux(self):
+		i=0
+		while i<=self.cfdSolver.numCells:
+			if self.VanLeer.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.vanleer(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.HLLC.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.HLLC(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.HLL.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.HLL(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.AUSM.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.ausm(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.AUSMp.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.ausmplus(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.AUSMUp.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.AUSMup(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+			if self.StegerWarming.isChecked():
+				self.cfdSolver.fi[i]= self.cfdSolver.schemes.stegerwarming(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
+								
+			#print "  vanleer: ", fi[i],
+			#print U[i]," ",U[i+1]," ",fi[i]
+			#fi[i]= schemes.stegerwarming(U[i],U[i+1] )
+			#fi[i]= schemes.HLLC(U[i],U[i+1] )
+			#print U[i]," ",U[i+1]," ",fi[i]
+			i=i+1  
+		#print " ",fi
+		i=1
+		while i<=self.cfdSolver.numCells:
+			self.cfdSolver.netflux[i][0]= self.cfdSolver.fi[i-1][0]-self.cfdSolver.fi[i][0]
+			self.cfdSolver.netflux[i][1]= self.cfdSolver.fi[i-1][1]-self.cfdSolver.fi[i][1]
+			self.cfdSolver.netflux[i][2]= self.cfdSolver.fi[i-1][2]-self.cfdSolver.fi[i][2]
+			i=i+1
+	def shockboundaryCondtn(self):
+		if self.radioButton_shockFree.isChecked():
+			self.cfdSolver.U[0][0] = self.cfdSolver.U[1][0]
+			self.cfdSolver.U[0][1] = self.cfdSolver.U[1][1]
+			self.cfdSolver.U[0][2] = self.cfdSolver.U[1][2]
+
+			self.cfdSolver.U[self.cfdSolver.numCells+1][0] = self.cfdSolver.U[self.cfdSolver.numCells][0]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][1] = self.cfdSolver.U[self.cfdSolver.numCells][1]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][2] = self.cfdSolver.U[self.cfdSolver.numCells][2]
+
+		if self.radioButton_shockReflective.isChecked():
+			self.cfdSolver.U[0][0] = self.cfdSolver.U[1][0]
+			self.cfdSolver.U[0][1] = -1*self.cfdSolver.U[1][1]
+			self.cfdSolver.U[0][2] = self.cfdSolver.U[1][2]
+
+			self.cfdSolver.U[self.cfdSolver.numCells+1][0] = self.cfdSolver.U[self.cfdSolver.numCells][0]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][1] = -1*self.cfdSolver.U[self.cfdSolver.numCells][1]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][2] = self.cfdSolver.U[self.cfdSolver.numCells][2]
+
+		if self.radioButton_shockComplement.isChecked():
+			self.cfdSolver.U[0][0] =  self.cfdSolver.U[self.cfdSolver.numCells][0]
+			self.cfdSolver.U[0][1] = self.cfdSolver.U[self.cfdSolver.numCells][1]
+			self.cfdSolver.U[0][2] = self.cfdSolver.U[self.cfdSolver.numCells][2]
+
+			self.cfdSolver.U[self.cfdSolver.numCells+1][0] =self.cfdSolver.U[1][0]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][1] = self.cfdSolver.U[1][1]
+			self.cfdSolver.U[self.cfdSolver.numCells+1][2] = self.cfdSolver.U[1][2]
+			
 	def advecSimulate(self):
 		self.cfdSimulatescope='advec'
 		self.numCells=self.doubleSpinBox_advecCellNum.value()
@@ -585,8 +699,9 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.Length = self.doubleSpinBox_advecLength.value()
 		self.c=self.doubleSpinBox_advecC.value()
 		self.CFL=self.doubleSpinBox_advecCFL.value()
+		self.timerdt=self.doubleSpinBox_advecTimer.value()
 		self.deltaX=self.Length/self.numCells
-		self.deltaT=self.CFL*self.deltaX/self.c
+		self.deltaT=fabs(self.CFL*self.deltaX/self.c)
 		self.x=[]
 		self.u=[]
 		self.u0=[]
@@ -636,46 +751,165 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		#print "numCells: ",self.numCells," CFL",self.CFL," Itr: ",self.itr
 		self.t=0
 		self.timerEvent(None)
-		self.timer = self.startTimer(100)
+		self.timer = self.startTimer(self.timerdt*1000)
 
 
 	def advecItr(self):
 		self.t+=1
 		#print " t: ",self.t
 		i=1
+		print "c: ",self.c
 		while i <= self.numCells:
-	    	##### FTCS
+			##### FTCS
 			if 	self.radioButton_FTCS.isChecked():
 				#print i
 				self.u[i] = self.u0[i] - (self.c * self.deltaT / (2.0*self.deltaX) ) * (self.u0[i+1] - self.u0[i-1])
-            ##### FTFS
+			##### FTFS
 			if 	self.radioButton_FTFS.isChecked():
 				self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i+1] - self.u0[i])
-        	##### FTBS
+			##### FTBS
 			if 	self.radioButton_FTBS.isChecked():            	
 				self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i] - self.u0[i-1])
             ##### Upwind
 			if 	self.radioButton_Upwind.isChecked():            	
 				if (self.c>0.0):
 					self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i] - self.u0[i-1])
-	        	elif (self.c<0.0):
-	        		self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i+1] - self.u0[i])
+				elif (self.c<0.0):
+					self.u[i] = self.u0[i] - (self.c * self.deltaT / self.deltaX) * (self.u0[i+1] - self.u0[i])
         	##### Lax Wendroff
 			if 	self.radioButton_LaxWendroff.isChecked():            	
 				self.lamda = self.c * self.deltaT / self.deltaX
 				self.u[i] = self.u0[i] - ( ( self.lamda / 2.0 ) * (self.u0[i+1] - self.u0[i-1])) + ( ( self.lamda * self.lamda / 2.0) * (self.u0[i+1] - 2.0 * self.u0[i] + self.u0[i-1]) ) 
-		 	i+=1				
-		#print " t3:",self.t
-		#print " t6:",self.t
+				print "self.c: ",self.c," self.lamda: ",self.lamda,"self.u[",i,"]",self.u[i],"self.deltaT: ",self.deltaT, "self.deltaX: ",self.deltaX
+		 	i+=1	
+		print "c1: ",self.c
 		i=1
 		while i <= self.numCells:
 			self.u0[i] = self.u[i]
 			i+=1
-		#print " t4:",self.t
-		self.u0[0] = self.u0[int(numCells)]
-		#print " t5:",self.t
-		self.u0[int(numCells)+1] = self.u0[1]
-		#print "t2: ",self.t
+		#### Boundary Conditions
+		if self.radioButton_advecComplement.isChecked():
+			self.u0[0] = self.u0[int(self.numCells)]
+			self.u0[int(self.numCells)+1] = self.u0[1]
+		if self.radioButton_advecFree.isChecked():
+			self.u0[0] = self.u0[1]
+			self.u0[int(self.numCells)+1] = self.u0[int(self.numCells)]
+		if self.radioButton_advecReflective.isChecked():
+			self.u0[0] = -1* self.u0[1]
+			self.u0[int(self.numCells)+1] = -1*self.u0[int(self.numCells)]
+		
+	def burgSimulate(self):
+		self.cfdSimulatescope='burg'
+
+		self.numCells=self.doubleSpinBox_burgCellNum.value()
+		self.totalTime=self.doubleSpinBox_burgtf.value()
+		self.Length = self.doubleSpinBox_advecLength.value()
+		self.CFL=self.doubleSpinBox_burgCFL.value()
+
+		self.deltaX=self.Length/self.numCells
+		self.deltaT= 0					#fabs(self.CFL*self.deltaX/self.c)
+		self.x=numpy.zeros(self.numCells+2)
+		self.u=numpy.zeros(self.numCells+2)
+		self.u0=numpy.zeros(self.numCells+2)
+		self.uinit=numpy.zeros(self.numCells+2)
+		# initialization
+	    # Length
+		i=0
+		while i <= (self.numCells+1):
+			self.x[i] = (2.0*i - 1.0) / (2.0*self.numCells)
+			i+=1
+		#backward step: for shock propagation and smearing
+		if 	self.radioButton_backstep.isChecked():
+			i=0
+			while i <= (self.numCells+1)/2.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 2.0
+				i+=1
+
+			i=((self.numCells+1)/2.0)+1
+			while i <= (self.numCells+1):
+				self.u[i] = self.u0[i] = self.uinit[i] = 1.0
+				i+=1
+
+		#forward step: for expansion evolution and smearing
+		if self.radioButton_forwstep.isChecked():
+			i=0
+			while i <= (self.numCells+1)/2.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 1.0
+				i+=1
+			i=((self.numCells+1)/2.0)+1
+			while i <= (self.numCells+1):
+				self.u[i] = self.u0[i] = self.uinit[i] = 2.0
+				i+=1
+
+		# backward ramp:for shock formation from just a smooth slope
+		if self.radioButton_backramp.isChecked():
+			i=0
+			while i <= (self.numCells+1)/4.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 2.0
+				i+=1
+			xTemp1 = self.x[int((self.numCells+1)/4.0)]
+			xTemp2 = self.x[int((self.numCells+1)/2.0)+1]
+			i=((self.numCells+1)/4.0)+1
+			while i <= (self.numCells+1)/2.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 2.0 - (self.x[i] - xTemp1) / (xTemp2 - xTemp1) ;
+				i+=1
+			i=((self.numCells+1)/2.0)+1
+			while i <= (self.numCells+1):
+				self.u[i] = self.u0[i] = self.uinit[i] = 1.0
+				i+=1
+
+		#forward ramp: for expansion evolution from constant slope
+		if self.radioButton_forwramp.isChecked():
+			i=0
+			while i <= (self.numCells+1)/4.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 1.0
+				i+=1
+			xTemp1 = self.x[int((self.numCells+1)/4.0)]
+			xTemp2 = self.x[int((self.numCells+1)/2.0)+1]
+			i=((self.numCells+1)/4.0)+1
+			while i <= (self.numCells+1)/2.0:
+				self.u[i] = self.u0[i] = self.uinit[i] = 1.0 + (self.x[i] - xTemp1) / (xTemp2 - xTemp1) 
+				i+=1
+			i=((self.numCells+1)/2.0)+1
+			while i <= (self.numCells+1):
+				self.u[i] = self.u0[i] = self.uinit[i] = 2.0
+				i+=1
+		self.timeElapsed=0.0
+		self.timerEvent(None)
+		self.timer = self.startTimer(self.doubleSpinBox_burgTimer.value()*1000)
+
+	def burgItr(self):
+
+		# deltaT calculation for burgers' equation
+		uMax=0.0
+		i=1
+		while i <= self.numCells:
+			if (fabs(self.u0[i]) > uMax):
+				uMax = self.u0[i]
+			i+=1
+		deltaT = fabs(self.CFL*self.deltaX/uMax);
+
+		i=1
+		while i <= self.numCells:
+			# Lax Method
+			self.u[i] = (self.u0[i+1]+self.u0[i-1])/2.0 - (deltaT/self.deltaX)*( self.u0[i+1]*self.u0[i+1] - self.u0[i-1]*self.u0[i-1])/4.0 
+			i+=1
+
+		i=1
+		while i <= self.numCells:
+			self.u0[i] = self.u[i]
+			i+=1
+		#### Boundary Conditions
+		if self.radioButton_burgComplement.isChecked():
+			self.u0[0] = self.u0[int(self.numCells)]
+			self.u0[int(self.numCells)+1] = self.u0[1]
+		if self.radioButton_burgFree.isChecked():
+			self.u0[0] = self.u0[1]
+			self.u0[int(self.numCells)+1] = self.u0[int(self.numCells)]
+		if self.radioButton_burgReflective.isChecked():
+			self.u0[0] = -1* self.u0[1]
+			self.u0[int(self.numCells)+1] = -1*self.u0[int(self.numCells)]
+		self.timeElapsed = self.timeElapsed + deltaT;
 
 
 		
