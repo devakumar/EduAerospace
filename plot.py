@@ -28,7 +28,7 @@ class Plot(FigureCanvas):
 
 	def plotStreakParticles(self, particles, tag = "pathLines", plotType='history'):
 		""" Initializing the plot of streak particles """
-		if tag == "streamLines": color = 'k-'
+		if tag == "velMagnitude": color = 'k-'
 		else : color = ''
 		self.plots = list(zeros(len(particles)))
 		if plotType == 'history' :
