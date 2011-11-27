@@ -156,7 +156,7 @@ class cfdSolver(object):
 		#scheme="HLLC"
 		strn= str(t) + "."+scheme+".txt"
 		f= open(strn,'w')
-		print " Time =",t,
+		#print " Time =",t,
 		i=1
 		while i<=self.numCells:
 			ri   =U[i][0]
@@ -367,14 +367,14 @@ class schemes(object):
 		ri   =Ui[0]
 		ui   =(Ui[1])/ri
 		pi   =((Ui[2]-(0.5*ui*ui*ri))*(gamma-1))
-		print "pi: ",pi,"ri: ",ri
+		#print "pi: ",pi,"ri: ",ri
 		ai   =math.sqrt((gamma*pi)/ri )    
 		mi   = ui/ai
 
 		ri1  =Ui1[0]
 		ui1  =(Ui1[1])/ri1
 		pi1  =((Ui1[2]-(0.5*ui1*ui1*ri1))*(gamma-1))
-		print "pi1: ",pi1,"ri1: ",ri1
+		#print "pi1: ",pi1,"ri1: ",ri1
 		ai1  = math.sqrt((gamma*pi1)/ri1 )   
 		mi1  = ui1/ai1
 

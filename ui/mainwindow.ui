@@ -814,7 +814,7 @@
         <property name="minimumSize">
          <size>
           <width>400</width>
-          <height>0</height>
+          <height>639</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -874,7 +874,7 @@
             </property>
             <widget class="QWidget" name="tab">
              <attribute name="title">
-              <string>Advection</string>
+              <string>&amp;Advection</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_11">
               <item>
@@ -1065,21 +1065,21 @@
                      <item>
                       <widget class="QRadioButton" name="radioButton_stepDown">
                        <property name="text">
-                        <string>Step Down</string>
+                        <string>Step &amp;Down</string>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_stepUp">
                        <property name="text">
-                        <string>Step Up</string>
+                        <string>Step &amp;Up</string>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_advecSin">
                        <property name="text">
-                        <string>Sin</string>
+                        <string>Si&amp;n</string>
                        </property>
                        <property name="checked">
                         <bool>true</bool>
@@ -1102,21 +1102,21 @@
                      <item>
                       <widget class="QRadioButton" name="radioButton_advecFree">
                        <property name="text">
-                        <string>Free</string>
+                        <string>&amp;Free</string>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_advecReflective">
                        <property name="text">
-                        <string>Reflective</string>
+                        <string>R&amp;eflective</string>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_advecComplement">
                        <property name="text">
-                        <string>Complementary</string>
+                        <string>&amp;Complementary</string>
                        </property>
                        <property name="checked">
                         <bool>true</bool>
@@ -1241,7 +1241,7 @@
                 <item>
                  <widget class="QPushButton" name="pushButton_advecSimulate">
                   <property name="text">
-                   <string>Run</string>
+                   <string>&amp;Run</string>
                   </property>
                  </widget>
                 </item>
@@ -1264,7 +1264,7 @@
             </widget>
             <widget class="QWidget" name="tab_2">
              <attribute name="title">
-              <string>Burger</string>
+              <string>&amp;Burger</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_29">
               <item>
@@ -1474,24 +1474,30 @@
                        <item>
                         <widget class="QRadioButton" name="radioButton_burgFree">
                          <property name="text">
-                          <string>Free</string>
+                          <string>&amp;Free</string>
+                         </property>
+                         <property name="checked">
+                          <bool>true</bool>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QRadioButton" name="radioButton_burgReflective">
                          <property name="text">
-                          <string>Reflective</string>
+                          <string>R&amp;eflective</string>
                          </property>
                         </widget>
                        </item>
                        <item>
                         <widget class="QRadioButton" name="radioButton_burgComplement">
                          <property name="text">
-                          <string>Complementary</string>
+                          <string>&amp;Complementary</string>
+                         </property>
+                         <property name="checkable">
+                          <bool>true</bool>
                          </property>
                          <property name="checked">
-                          <bool>true</bool>
+                          <bool>false</bool>
                          </property>
                         </widget>
                        </item>
@@ -1542,7 +1548,7 @@
                   <item>
                    <widget class="QPushButton" name="pushButton_burgSimulate">
                     <property name="text">
-                     <string>Run</string>
+                     <string>&amp;Run</string>
                     </property>
                    </widget>
                   </item>
@@ -1567,7 +1573,7 @@
             </widget>
             <widget class="QWidget" name="tab_potOutputControl_2">
              <attribute name="title">
-              <string>ShockSchemes</string>
+              <string>Shock&amp;Schemes</string>
              </attribute>
              <layout class="QHBoxLayout" name="horizontalLayout_16">
               <item>
@@ -1611,6 +1617,13 @@
                    <widget class="QRadioButton" name="StegerWarming">
                     <property name="text">
                      <string>StegerWarming</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QRadioButton" name="radioButton_test">
+                    <property name="text">
+                     <string>Test</string>
                     </property>
                    </widget>
                   </item>
@@ -1866,24 +1879,30 @@
                      <item>
                       <widget class="QRadioButton" name="radioButton_shockFree">
                        <property name="text">
-                        <string>Free</string>
+                        <string>&amp;Free</string>
+                       </property>
+                       <property name="checked">
+                        <bool>true</bool>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_shockReflective">
                        <property name="text">
-                        <string>Reflective</string>
+                        <string>&amp;Reflective</string>
                        </property>
                       </widget>
                      </item>
                      <item>
                       <widget class="QRadioButton" name="radioButton_shockComplement">
                        <property name="text">
-                        <string>Complementary</string>
+                        <string>&amp;Complementary</string>
+                       </property>
+                       <property name="checkable">
+                        <bool>true</bool>
                        </property>
                        <property name="checked">
-                        <bool>true</bool>
+                        <bool>false</bool>
                        </property>
                       </widget>
                      </item>
@@ -1911,7 +1930,7 @@
             </widget>
             <widget class="QWidget" name="tab_potInput_2">
              <attribute name="title">
-              <string>ShockParam</string>
+              <string>Shock&amp;Param</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_7">
               <item>
@@ -2504,7 +2523,7 @@
               <item>
                <widget class="QPushButton" name="pushButton_cfdSimulate">
                 <property name="text">
-                 <string>Run</string>
+                 <string>&amp;Run</string>
                 </property>
                </widget>
               </item>

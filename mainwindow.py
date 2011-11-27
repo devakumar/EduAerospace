@@ -21,6 +21,7 @@ from math import *
 from numpy import *
 from ui import ui_mainwindow
 from cfdSolver import *
+from tests import *
 
 __version__ = "1.0.0"
 
@@ -615,50 +616,49 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				if self.cfdSolver.itr>self.cfdSolver.itrf :
 						self.killTimer(self.timer)
 				else:
+					self.statusbar.showMessage("Time= "+str(self.cfdSolver.t)+"Iterations= "+str(self.cfdSolver.itr))
 					self.clearPlot()
 					self.cfdflux()
 					umax = self.cfdSolver.maxofu()
 					self.cfdSolver.dt=  1.0 *self.cfdSolver.cfl* self.cfdSolver.dx/umax
 					self.cfdSolver.update()
-					print " ri ",self.cfdSolver.ri,
 					self.shockboundaryCondtn()
 					self.cfdSolver.itr=self.cfdSolver.itr+1
 					self.cfdSolver.t=self.cfdSolver.t+self.cfdSolver.dt
 					self.cfdSolver.plt()
-					print "t ",self.cfdSolver.t,"itr",self.cfdSolver.itr
-					if radioButton_shockAll.isChecked():	
+					if self.radioButton_shockAll.isChecked():	
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u_initial,'r')
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u,'b')
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p_initial,'r')
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p,'k')
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'g')
-					if radioButton_shockPres.isChecked():	
-						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
-						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'g')
-					if radioButton_shockDen.isChecked():	
-						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u_initial,'r')
-						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u,'g')
-					if radioButton_shockVel.isChecked():	
+					if self.radioButton_shockPres.isChecked():	
 						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p_initial,'r')
-						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p,'g')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p,'k')
+					if self.radioButton_shockDen.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'k')
+					if self.radioButton_shockVel.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u,'k')
 					self.graphicWidget.fig.canvas.draw()
 
 			elif self.cfdSimulatescope=='burg':
 				if self.timeElapsed > self.totalTime:
 						self.killTimer(self.timer)
 				else:
+					self.statusbar.showMessage("Time= "+str(self.timeElapsed))
 					self.clearPlot()
 					self.burgItr()
 					self.graphicWidget.item.plot(self.x,self.uinit,'r')
 					self.graphicWidget.item.plot(self.x,self.u,'k')
 					self.graphicWidget.fig.canvas.draw()
-
-				
 			else:
 				if self.t > self.itr:
 						self.killTimer(self.timer)
 				else:
+					self.statusbar.showMessage("Iterations= "+str(self.t))
 					self.clearPlot()
 					self.advecItr()
 					self.graphicWidget.item.plot(self.x,self.uinit,'r')
@@ -685,41 +685,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.cfdSolver.itr=0
 		self.timerEvent(None)
 		self.timer = self.startTimer(self.doubleSpinBox_shockTimer.value()*1000)
-		
-		
-		
-		
-		
-		
-		
-			#print "DTIMe", dt
-			#print "For itr ",itr," The time is",t," and dt is",dt
-			#print U[49][0],"  ",U[49][1],"  ",U[49][2]," \t ",U[50][0]," ",U[50][1]," ",U[50][2],"\t ",U[51][0]," ",U[51][1]," ",U[51][2]
-			#print netflux[49][0],"  ",netflux[49][1],"  ",netflux[49][2]," \t ",netflux[50][0]," ",netflux[50][1]," ",netflux[50][2],"\t ",netflux[51][0]," ",netflux[51][1]," ",netflux[51][2]
 
-#		print " Time Final", self.cfdSolver.t
-#		#self.output()
-#		print " x ",self.x," ri ",self.cfdSolver.ri,
-#		self.plt()
-#		print " Time Final", self.t
-		
-		
-#		self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.ri,'r')
-#		temp1rho=[]
-#		temp2ui=[]
-#		temp3pi=[]
-#		xplt=[]
-#		for i in range(int(self.cfdInput['numCells']) ):
-#			xplt.append(self.cfdSolver.x[i] ) 
-#			temp1= self.cfdSolver.U[i][0]
-#			temp1rho.append(temp1)
-#			temp2 =(self.cfdSolver.U[i][1])/temp1
-#			temp2ui.append(temp2 )
-#			temp3pi.append( ((self.cfdSolver.U[i][2]-(0.5*temp2*temp2*temp1))*(self.cfdInput['gamma']-1))  )
-#		self.graphicWidget.item.plot(xplt,temp1rho,'r')
-#		self.graphicWidget.item.plot(xplt,temp2ui,'g')
-#		self.graphicWidget.item.plot(xplt,temp3pi,'b')
-#		self.graphicWidget.item.set_xlim(0,self.cfdInput['length'])
 	def cfdInputfnc(self):
 		cfl = self.doubleSpinBox_CFL.value()
 		cfdLength = self.doubleSpinBox_cfdLength.value()
@@ -787,14 +753,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				self.cfdSolver.fi[i]= self.cfdSolver.schemes.AUSMup(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
 			if self.StegerWarming.isChecked():
 				self.cfdSolver.fi[i]= self.cfdSolver.schemes.stegerwarming(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )
-								
-			#print "  vanleer: ", fi[i],
-			#print U[i]," ",U[i+1]," ",fi[i]
-			#fi[i]= schemes.stegerwarming(U[i],U[i+1] )
-			#fi[i]= schemes.HLLC(U[i],U[i+1] )
-			#print U[i]," ",U[i+1]," ",fi[i]
+			if self.radioButton_test.isChecked():
+				self.tests=tests()
+				self.cfdSolver.fi[i]= self.tests.test(Ui=self.cfdSolver.U[i],Ui1=self.cfdSolver.U[i+1] )					
 			i=i+1  
-		#print " ",fi
 		i=1
 		while i<=self.cfdSolver.numCells:
 			self.cfdSolver.netflux[i][0]= self.cfdSolver.fi[i-1][0]-self.cfdSolver.fi[i][0]
@@ -893,13 +855,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def advecItr(self):
 		self.t+=1
-		#print " t: ",self.t
 		i=1
-		print "c: ",self.c
+
 		while i <= self.numCells:
 			##### FTCS
 			if 	self.radioButton_FTCS.isChecked():
-				#print i
 				self.u[i] = self.u0[i] - (self.c * self.deltaT / (2.0*self.deltaX) ) * (self.u0[i+1] - self.u0[i-1])
 			##### FTFS
 			if 	self.radioButton_FTFS.isChecked():
@@ -917,9 +877,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			if 	self.radioButton_LaxWendroff.isChecked():            	
 				self.lamda = self.c * self.deltaT / self.deltaX
 				self.u[i] = self.u0[i] - ( ( self.lamda / 2.0 ) * (self.u0[i+1] - self.u0[i-1])) + ( ( self.lamda * self.lamda / 2.0) * (self.u0[i+1] - 2.0 * self.u0[i] + self.u0[i-1]) ) 
-				print "self.c: ",self.c," self.lamda: ",self.lamda,"self.u[",i,"]",self.u[i],"self.deltaT: ",self.deltaT, "self.deltaX: ",self.deltaX
 		 	i+=1	
-		print "c1: ",self.c
 		i=1
 		while i <= self.numCells:
 			self.u0[i] = self.u[i]
