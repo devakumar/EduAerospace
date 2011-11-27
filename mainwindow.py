@@ -3,6 +3,8 @@ import os
 import platform
 import sys
 import re
+import time
+from math import *
 from pylab import linspace
 from matplotlib.backends.backend_qt4agg \
 		import NavigationToolbar2QTAgg as NavigationToolbar
@@ -13,10 +15,8 @@ from PyQt4.QtCore import *
 # Local libraries
 from potentialLibrary import *
 from plot import *
-from math import *
 from ui import ui_mainwindow
 from cfdSolver import *
-import time
 
 __version__ = "1.0.0"
 
@@ -27,8 +27,8 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.filename = None
 		self.setupUi(self)
 		self.setCentralWidget(self.centralwidget)
-		#self.scope = 'potentialFlows'
-		self.scope = 'cfd'
+		self.scope = 'potentialFlows'
+		#self.scope = 'cfd'
 
 		# Potential flow variable declarations
 		self.potLibrary = potentialLibrary()
@@ -39,6 +39,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.potStreakParticles = []
 		self.timer = None
 		self.elementTreeItemDict = {}
+		self.cfdSimulatescope = None
 
 		# Potential flow related connections
 		QObject.connect(self.pushButton_Add, SIGNAL("clicked()"), self.potaddElement)
@@ -58,9 +59,13 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.comboBox_pathLines, SIGNAL("currentIndexChanged(QString)"), self.potSetPatchInputParameters)
 		QObject.connect(self.pushButton_cfdSimulate, SIGNAL("clicked()"), self.cfdSimulate)
 		QObject.connect(self.pushButton_advecSimulate, SIGNAL("clicked()"), self.advecSimulate)
+		QObject.connect(self.action_Potential_Flows, SIGNAL("activated()"), self.setPotentialFlowsActivated)
+		QObject.connect(self.actionPanel_Methods, SIGNAL("activated()"), self.setPanelMethodsActivated)
+		QObject.connect(self.actionCFD, SIGNAL("activated()"), self.setCFDActivated)
 
 
 		if self.scope == 'potentialFlows' :
+			self.potTime = 0.0
 			self.InputPotentialFlows_Dock.setHidden(False)
 			self.InputCFD_Dock.setHidden(True)
 			# The following will set the input widget accordingly
@@ -85,6 +90,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.axisRange = array(self.graphicWidget.item.axis())
 			self.comboBox_pathLines.setCurrentIndex(1)
 			self.comboBox_pathLines.setCurrentIndex(0)
+
 		elif self.scope == 'cfd' :
 			self.InputCFD_Dock.setHidden(False)
 			self.InputPotentialFlows_Dock.setHidden(True)
@@ -99,6 +105,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.axisRange = array(self.graphicWidget.item.axis())
 
 	# Potential flow related SLOTS		
+	def setPotentialFlowsActivated(self):
+		""" Activates potential flow parameters """
+		self.scope = 'potentialFlows'
+
 	def potaddElement(self):
 		""" SLOT for add action in  GUI """
 		self.elementInfo = {}
@@ -223,21 +233,28 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.killTimer(self.timer)
 		self.clearPlot()
 		self.graphicWidget.fig.canvas.draw()
-		self.pushButton_toggleSimulation.setEnabled(True)
-		self.pushButton_toggleSimulation.setText("&Pause")
-		self.count = 0
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
-		if (self.plotType == 'pathLines') and (self.potLibrary.elements != []) :
-			if self.potStreakParticles == [] :
-				self.potAddDefaultStreakParticles()
-		elif (self.plotType == 'streamLines') and (self.potLibrary.elements != []):
-			self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
-			self.potAddStreamParticles()
+		if (self.potLibrary.elements != []):
+			self.pushButton_toggleSimulation.setEnabled(True)
+			self.pushButton_toggleSimulation.setText("&Pause")
+			self.count = 0
+			if (self.plotType == 'pathLines'):
+				if self.potStreakParticles == [] :
+					self.potAddDefaultStreakParticles()
+			elif (self.plotType == 'velMagnitude') :
+				self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
+				self.potAddStreamParticles()
+			elif (self.plotType == 'streamLines') :
+				self.potPlotStreamLines()
 
-		# Start simulation in real time	
-		self.timerEvent(None)
-		self.timer = self.startTimer(0.001)
+			# Start simulation in real time	
+			self.timerEvent(None)
+			self.potTime = 0.0
+			self.statusbar.showMessage("Simulating ...")
+			self.timer = self.startTimer(0.001)
+		else :
+			self.statusbar.showMessage("No potential flow elements found. You can add them from the potential flows input box")
 
 	def potResizeGraphicWindow(self):
 		""" Resizes the plot widget based on the present elements """
@@ -255,7 +272,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potAutoscaleAxis(self):
 		""" To set auto scale on if axis limits are exceeded"""
-		if self.plotType != "stremLines" and self.potStreakParticles != []:
+		if self.plotType == "pathLines" and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
 			if min(xRange) < self.axisRange[0]: self.axisRange += array([min(xRange) - self.axisRange[0], 0, 0, 0])
@@ -315,7 +332,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		elif patchType == 'Circular' :
 			center = complex(self.doubleSpinBox_centerX.value(), self.doubleSpinBox_centerY.value())
 			radius = self.doubleSpinBox_patchInfo1.value()
-			for theta in linspace(0, 2*pi, 180):
+			for theta in linspace(0, 2*pi, (10*round(radius) + 1)*5):
 				position = center + radius*exp(1j*theta)
 				newParticle = particle(position.real, position.imag)
 				self.potStreakParticles.append(newParticle)
@@ -376,16 +393,16 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if (self.radioButton_StreamLines.isChecked()):
 			self.plotType = 'streamLines'
 			# To set the patch input parameters invisible
-			self.potSetPatchInVisibility(True)
+			self.potSetPatchParamInVisibile(True)
 		elif (self.radioButton_PathLines.isChecked()):
 			self.plotType = 'pathLines'
-			self.potSetPatchInVisibility(False)
+			self.potSetPatchParamInVisibile(False)
 			self.comboBox_pathLines.setCurrentIndex(1)
 			self.comboBox_pathLines.setCurrentIndex(0)
 		else :
 			pass
 
-	def potSetPatchInVisibility(self, invisible):
+	def potSetPatchParamInVisibile(self, invisible):
 		""" sets the patch visible when path lines is selected and invisible
 		for all other inputs"""
 		self.label_center.setHidden(invisible)
@@ -431,7 +448,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			if patchType == 'Line at X': self.label_patchInfo1.setText("At X ")
 			elif patchType == 'Line at Y': self.label_patchInfo1.setText("At Y ")
 		elif patchType == 'Rectangular':
-			self.potSetPatchInVisibility(False)
+			self.potSetPatchParamInVisibile(False)
 			self.doubleSpinBox_patchInfo1.setMinimum(0.0)
 			self.doubleSpinBox_patchInfo1.setSingleStep(1.0)
 			self.doubleSpinBox_patchInfo2.setMinimum(0.0)
@@ -440,17 +457,19 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		else :
 			pass
 
+	""" Obsolate - No longer in the package """
 	def potAddStreamParticles(self):
-		""" Takes the dimwentions of plot widget and plots stream lines by
+		""" Takes the dimensions of plot widget and plots stream lines by
 		advecting the particles for a small time step dt """
 		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*3
 		noOfParticlesAtY = int(self.axisRange[1] - self.axisRange[0])*2
 		self.potStreakParticles = [particle(x, y) for x in linspace(self.axisRange[1], self.axisRange[0], \
 				noOfParticlesAtY) for y in linspace(self.axisRange[2]+0.1, self.axisRange[3]-0.1, noOfParticlesAtX)]
 		self.graphicWidget.item.grid(False)
-		self.graphicWidget.plotStreakParticles(self.potStreakParticles, tag = "streamLines")
+		self.graphicWidget.plotStreakParticles(self.potStreakParticles, tag = "velMagnitude")
 		self.graphicWidget.fig.canvas.draw()
 
+	""" This function is unused as of now """
 	def potVelocityPlot(self):
 		""" Takes the dimensions of plot widget and plots stream lines by
 		advecting the particles for a small time step dt """
@@ -466,17 +485,24 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				axis = self.graphicWidget.fig.gca()
 				axis.add_patch(FancyArrowPatch(positions[0],positions[-1],arrowstyle='->',mutation_scale=15))
 		self.graphicWidget.fig.canvas.draw()
-	def timerEvent(self, event):
+
+	def potPlotStreamLines(self):
+		""" Plot stream lines """
+		pass
+
+	def timerEvent(self, event, dt = 0.01):
 		""" Supposed to update the plot """
 		if self.scope == 'potentialFlows':
-			if self.plotType == "stremLines" :
+			if self.plotType == "velMagnitude" :
 				repeat = 2
 				maxCount = 10
-			else : 
+				self.clearPlot()
+			else :
 				repeat = 1
 				maxCount = self.count + 1
 			for instnace in range(repeat):
-				self.potAdvectParticles(dt = 0.01, integType = 'rk2')
+				self.potAdvectParticles(dt = dt, integType = 'rk2')
+				self.potTime += dt
 				if self.graphicWidget.plots != None :
 					for index in range(0, len(self.potStreakParticles)):
 						xData = [pos.real for pos in self.potStreakParticles[index].history]
@@ -488,6 +514,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 				else :
 					self.count += 1
 			self.potAutoscaleAxis()
+			self.statusbar.showMessage("Time = " + str(self.potTime))
 		if self.scope == 'cfd':
 			if self.cfdSimulatescope =='shock':
 				pass
@@ -500,10 +527,12 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 					self.graphicWidget.item.plot(self.x,self.uinit,'r')
 					self.graphicWidget.item.plot(self.x,self.u,'k')
 					self.graphicWidget.fig.canvas.draw()
-					
-			
 
 	""" CFD declarations """
+	def setCFDActivated(self):
+		""" Set the CFD parameters on initialization """
+		self.scope = 'cfd'
+
 	def cfdSimulate(self):
 		self.cfdSimulatescope='shock'
 		self.clearPlot()
@@ -677,6 +706,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.u0[int(numCells)+1] = self.u0[1]
 		#print "t2: ",self.t
 
+	""" Panel methods declarations - Kailash Make your changes here when you
+	pull/merge/push """
+	def setPanelMethodsActivated(self):
+		""" set panel method initial declarations """
+		self.scope = 'panelMethods'
 
 		
 if __name__ == "__main__":
