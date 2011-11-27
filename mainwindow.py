@@ -318,16 +318,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			for sink in self.potLibrary.sinks :
 				if abs(streakParticle.pos - sink.pos) < sink.__tolerance/5.0 :
 					streakParticle.pos = sink.pos
-	
-	def toggleSimulation(self):
-		""" Stops the simulation if present """
-		if self.timer != None :
-			self.killTimer(self.timer)
-			self.timer = None
-			self.pushButton_toggleSimulation.setText("&Play")
-		else :
-			self.timer = self.startTimer(0.001)
-			self.pushButton_toggleSimulation.setText("&Pause")
 
 	def potAddDefaultStreakParticles(self):
 		""" Add specified streak particles """
@@ -562,6 +552,39 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.graphicWidget.item.axis(array(self.axisRange))
 		self.graphicWidget.fig.canvas.draw()
 
+	
+	def toggleSimulation(self):
+		""" Stops the simulation if present """
+		if self.timer != None :
+			self.killTimer(self.timer)
+			self.timer = None
+			if self.scope=='potentialFlows':
+				self.pushButton_toggleSimulation.setText("&Play")
+			elif self.scope == 'cfd':
+				if self.cfdSimute=='advec':
+					self.pushButton_toggleadvecSimulation.setText("&Play")
+				elif self.cfdSimute=='burg':
+					self.pushButton_toggleburgSimulation.setText("&Play")
+				elif self.cfdSimute=='shock':
+					self.pushButton_toggleshockSimulation.setText("&Play")
+
+		else :
+			if self.scope=='potentialFlows':
+				self.timer = self.startTimer(0.001)
+				self.pushButton_toggleSimulation.setText("&Pause")
+			elif self.scope == 'cfd':
+				if self.cfdSimute=='advec':
+					self.timer = self.startTimer(self.timerdt*1000)
+					self.pushButton_toggleadvecSimulation.setText("&Pause")
+				elif self.cfdSimute=='burg':
+					self.timer = self.startTimer(self.doubleSpinBox_burgTimer.value()*1000)
+					self.pushButton_toggleburgSimulation.setText("&Pause")
+				elif self.cfdSimute=='shock':
+					self.timer = self.startTimer(self.doubleSpinBox_shockTimer.value()*1000)
+					self.pushButton_toggleshockSimulation.setText("&Pause")
+
+
+
 	def timerEvent(self, event, dt = 0.01):
 		""" Supposed to update the plot """
 		if self.scope == 'potentialFlows':
@@ -603,8 +626,22 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 					self.cfdSolver.t=self.cfdSolver.t+self.cfdSolver.dt
 					self.cfdSolver.plt()
 					print "t ",self.cfdSolver.t,"itr",self.cfdSolver.itr
-					self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
-					self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'b')
+					if radioButton_shockAll.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u,'b')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p,'k')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'g')
+					if radioButton_shockPres.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.rho,'g')
+					if radioButton_shockDen.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.u,'g')
+					if radioButton_shockVel.isChecked():	
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p_initial,'r')
+						self.graphicWidget.item.plot(self.cfdSolver.x,self.cfdSolver.p,'g')
 					self.graphicWidget.fig.canvas.draw()
 
 			elif self.cfdSimulatescope=='burg':
