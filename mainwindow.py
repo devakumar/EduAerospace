@@ -133,6 +133,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ (" + str(X) + ", " + str(Y) +")"], 0)
 			self.treeWidget_potElements.topLevelItem(0).addChild(self.treeWidgetItem)
+			self.elementInfo['strength'] = -1*self.elementInfo['strength']
 		elif self.radioButton_Sink.isChecked():
 			self.elementInfo['type'] = 'sink'
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
@@ -144,7 +145,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ (" + str(X) + ", " + str(Y) +")"], 2)
 			self.treeWidget_potElements.topLevelItem(2).addChild(self.treeWidgetItem)
-			self.elementInfo['strength'] = -1*self.elementInfo['strength']
 		elif self.radioButton_UniformFlow.isChecked():
 			self.elementInfo['type'] = 'uniformFlow'
 			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle_OR_X.value()
@@ -340,10 +340,17 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		elif patchType == 'Circular' :
 			center = complex(self.doubleSpinBox_centerX.value(), self.doubleSpinBox_centerY.value())
 			radius = self.doubleSpinBox_patchInfo1.value()
-			for theta in linspace(0, 2*pi, (10*round(radius) + 1)*5):
+			for theta in linspace(0, 2*pi, (10*round(radius) + 3)*5):
 				position = center + radius*exp(1j*theta)
 				newParticle = particle(position.real, position.imag)
 				self.potStreakParticles.append(newParticle)
+		elif patchType == 'Line at X':
+			self.potAddParticlesAt(self.doubleSpinBox_patchInfo1.value(), yMin = self.axisRange[2], yMax = self.axisRange[3], tag = 'X')
+		elif patchType == 'Line at Y':
+			self.potAddParticlesAt(self.doubleSpinBox_patchInfo1.value(), yMin = self.axisRange[0], yMax = self.axisRange[1], tag = 'Y')
+		else :
+			pass
+
 		self.graphicWidget.plotStreakParticles(self.potStreakParticles)
 		self.potAutoscaleAxis()
 		self.graphicWidget.fig.canvas.draw()
@@ -515,7 +522,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		x = x.reshape(noOfParticlesAtY, noOfParticlesAtX)
 		y = y.reshape(noOfParticlesAtY, noOfParticlesAtX)
 		velocities = velocities.reshape(noOfParticlesAtY, noOfParticlesAtX)
-		self.graphicWidget.item.contour(x, y, velocities)
+		self.graphicWidget.item.contourf(x, y, velocities)
 		#self.graphicWidget.item.colorbar()
 		self.graphicWidget.item.axis('equal')
 		self.potStreakParticles = []
