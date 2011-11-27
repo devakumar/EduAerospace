@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'mainwindow.ui'
+# Form implementation generated from reading ui file 'ui/mainwindow.ui'
 #
-# Created: Mon Nov 28 00:06:22 2011
+# Created: Mon Nov 28 04:09:27 2011
 #      by: PyQt4 UI code generator 4.7.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -321,6 +321,9 @@ class Ui_MainWindow(object):
         self.label.setObjectName("label")
         self.horizontalLayout_18.addWidget(self.label)
         self.doubleSpinBox_figXmin = QtGui.QDoubleSpinBox(self.groupBox_customizePlot)
+        self.doubleSpinBox_figXmin.setDecimals(1)
+        self.doubleSpinBox_figXmin.setMinimum(-10000.0)
+        self.doubleSpinBox_figXmin.setMaximum(10000.0)
         self.doubleSpinBox_figXmin.setObjectName("doubleSpinBox_figXmin")
         self.horizontalLayout_18.addWidget(self.doubleSpinBox_figXmin)
         self.verticalLayout_21.addLayout(self.horizontalLayout_18)
@@ -330,6 +333,9 @@ class Ui_MainWindow(object):
         self.label_3.setObjectName("label_3")
         self.horizontalLayout_26.addWidget(self.label_3)
         self.doubleSpinBox_figXmax = QtGui.QDoubleSpinBox(self.groupBox_customizePlot)
+        self.doubleSpinBox_figXmax.setDecimals(1)
+        self.doubleSpinBox_figXmax.setMinimum(-10000.0)
+        self.doubleSpinBox_figXmax.setMaximum(10000.0)
         self.doubleSpinBox_figXmax.setObjectName("doubleSpinBox_figXmax")
         self.horizontalLayout_26.addWidget(self.doubleSpinBox_figXmax)
         self.verticalLayout_21.addLayout(self.horizontalLayout_26)
@@ -339,6 +345,9 @@ class Ui_MainWindow(object):
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_27.addWidget(self.label_2)
         self.doubleSpinBox_figYmin = QtGui.QDoubleSpinBox(self.groupBox_customizePlot)
+        self.doubleSpinBox_figYmin.setDecimals(1)
+        self.doubleSpinBox_figYmin.setMinimum(-10000.0)
+        self.doubleSpinBox_figYmin.setMaximum(10000.0)
         self.doubleSpinBox_figYmin.setObjectName("doubleSpinBox_figYmin")
         self.horizontalLayout_27.addWidget(self.doubleSpinBox_figYmin)
         self.verticalLayout_21.addLayout(self.horizontalLayout_27)
@@ -348,6 +357,9 @@ class Ui_MainWindow(object):
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_29.addWidget(self.label_4)
         self.doubleSpinBox_figYmax = QtGui.QDoubleSpinBox(self.groupBox_customizePlot)
+        self.doubleSpinBox_figYmax.setDecimals(1)
+        self.doubleSpinBox_figYmax.setMinimum(-10000.0)
+        self.doubleSpinBox_figYmax.setMaximum(10000.0)
         self.doubleSpinBox_figYmax.setObjectName("doubleSpinBox_figYmax")
         self.horizontalLayout_29.addWidget(self.doubleSpinBox_figYmax)
         self.verticalLayout_21.addLayout(self.horizontalLayout_29)
@@ -368,7 +380,7 @@ class Ui_MainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.InputCFD_Dock.sizePolicy().hasHeightForWidth())
         self.InputCFD_Dock.setSizePolicy(sizePolicy)
-        self.InputCFD_Dock.setMinimumSize(QtCore.QSize(400, 0))
+        self.InputCFD_Dock.setMinimumSize(QtCore.QSize(400, 633))
         self.InputCFD_Dock.setMaximumSize(QtCore.QSize(400, 524287))
         self.InputCFD_Dock.setAutoFillBackground(False)
         self.InputCFD_Dock.setInputMethodHints(QtCore.Qt.ImhNone)

@@ -1,0 +1,7 @@
+digraph G {
+	MainWindow [shape = box];
+	MainWindow -> {CFD; potFlows };
+	potFlows [label="Potential \nflows"];
+	potFlows -> potentialLibrary;
+	potentailLibrary -> {particle; potentialElement; potentialLibrary}
+}
