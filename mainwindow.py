@@ -50,6 +50,10 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		QObject.connect(self.pushButton_toggleSimulation, SIGNAL("clicked()"), self.toggleSimulation)
 		QObject.connect(self.pushButton_potAddpatch, SIGNAL("clicked()"), self.potAddStreakParticles)
 		QObject.connect(self.pushButton_potRemoveTracers, SIGNAL("clicked()"), self.potRemoveSreakParticles)
+		QObject.connect(self.pushButton_clearPlot, SIGNAL("clicked()"), self.clearPlot)
+		QObject.connect(self.pushButton_setAxesRange, SIGNAL("clicked()"), self.setCustomAxisRange)
+		QObject.connect(self.pushButton_setDefaultAxesRange, SIGNAL("clicked()"), self.setDefaultAxisRange)
+		QObject.connect(self.pushButton_potClearPotElements, SIGNAL("clicked()"), self.potClearAllPotElements)
 		QObject.connect(self.radioButton_Source, SIGNAL("clicked()"), self.potSourceSelected)
 		QObject.connect(self.radioButton_Sink, SIGNAL("clicked()"), self.potSinkSelected)
 		QObject.connect(self.radioButton_Doublet, SIGNAL("clicked()"), self.potDoubletSelected)
@@ -72,37 +76,36 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			# The following will set the input widget accordingly
 			self.radioButton_Source.setChecked(True)
 			self.potSetVisible(self.radioButton_UniformFlow.isChecked())
-			# Following block will set window for visulaization. A matplotlib Figure window
-			self.graphicWidget = Plot()
-			self.graphicWidget.setParent(self)
-			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
-			self.verticalLayout = QVBoxLayout()
-			self.horizontalLayout = QHBoxLayout()
-			self.verticalLayout.addWidget(self.graphicWidget)
-			self.horizontalLayout.addWidget(self.navigationTollBar)
-			self.pushButton_ClearPlot = QPushButton()
-			self.pushButton_ClearPlot.setObjectName("pushButton_ClearPlot")
-			self.horizontalLayout.addWidget(self.pushButton_ClearPlot)
-			self.pushButton_ClearPlot.setText("&Clear plot")
-			QObject.connect(self.pushButton_ClearPlot, SIGNAL("clicked()"), self.clearPlot)
-			self.verticalLayout.addLayout(self.horizontalLayout)
-			self.horizontalLayout_Main.addLayout(self.verticalLayout)
-			self.graphicWidget.show()
-			self.axisRange = array(self.graphicWidget.item.axis())
 			self.comboBox_pathLines.setCurrentIndex(1)
 			self.comboBox_pathLines.setCurrentIndex(0)
 
 		elif self.scope == 'cfd' :
 			self.InputCFD_Dock.setHidden(False)
 			self.InputPotentialFlows_Dock.setHidden(True)
+
+		if self.scope == 'potentialFlows' or self.scope == 'cfd':
+			# Following block will set window for visulaization. A matplotlib Figure window
 			self.graphicWidget = Plot()
 			self.graphicWidget.setParent(self)
 			self.navigationTollBar = NavigationToolbar(self.graphicWidget, self)
 			self.verticalLayout = QVBoxLayout()
+			self.horizontalLayout_navig = QHBoxLayout()
+			self.horizontalLayout_fig = QHBoxLayout()
+			#self.groupBox_customizePlot.setParent(self.horizontalLayout_fig)
+			#self.verticalLayout.addLayout(self.horizontalLayout_fig)
 			self.verticalLayout.addWidget(self.graphicWidget)
-			self.verticalLayout.addWidget(self.navigationTollBar)
-			self.horizontalLayout_Main.addLayout(self.verticalLayout)
-			self.graphicWidget.show()
+			self.horizontalLayout_navig.addWidget(self.navigationTollBar)
+			self.pushButton_showFigCustomization = QPushButton()
+			self.pushButton_showFigCustomization .setObjectName("pushButton_showFigCustomization")
+			self.horizontalLayout_navig.addWidget(self.pushButton_showFigCustomization)
+			self.pushButton_showFigCustomization.setText("&Options>>")
+			QObject.connect(self.pushButton_showFigCustomization, SIGNAL("clicked()"), self.toggleFigOptions)
+			self.verticalLayout.addLayout(self.horizontalLayout_navig)
+			self.horizontalLayout_fig.addLayout(self.verticalLayout)
+			self.horizontalLayout_fig.addWidget(self.groupBox_customizePlot)
+			self.horizontalLayout_Main.addLayout(self.horizontalLayout_fig)
+			self.axisRange = array(self.graphicWidget.item.axis())
+			self.groupBox_customizePlot.setHidden(True)
 			self.axisRange = array(self.graphicWidget.item.axis())
 
 	# Potential flow related SLOTS		
@@ -159,6 +162,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		# Add this treeElement and potElement to the dictionary
 		self.elementTreeItemDict[self.treeWidgetItem] = self.potLibrary.elements[-1]
 		self.pushButton_Remove.setEnabled(True)
+		self.pushButton_potClearPotElements.setEnabled(True)
 		self.graphicWidget.fig.canvas.draw()
 
 	def potRemoveElement(self):
@@ -167,12 +171,11 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if self.elementTreeItemDict.has_key(selected[0]):
 			self.potLibrary.deleteElement(self.elementTreeItemDict[selected[0]])
 			del self.elementTreeItemDict[selected[0]]
-			message = "Removed the element. Nothing to worry if it still appears in the list"
-			self.statusbar.showMessage(message , 1500)
+			message = "Removed the element. It may appear in the list"
+			self.statusbar.showMessage(message , 2000)
 			# self.treeWidget_potElements.topLevelItem(0).removeChild(self.treeWidget_potElements.topLevelItem(0).child(1))
 			# Need to clear the plot before plotting
 			self.graphicWidget.plotPotElements(self.potLibrary.elements)
-			self.graphicWidget.show()
 			self.graphicWidget.fig.canvas.draw()
 			# The following thing is not working - Check why. However the element from the library is deleted
 			self.treeWidget_potElements.removeItemWidget(selected[0], 0)
@@ -395,6 +398,13 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.potAutoscaleAxis()
 		self.graphicWidget.fig.canvas.draw()
 
+	def toggleFigOptions(self):
+		""" Enables figure options """
+		self.groupBox_customizePlot.setHidden(not self.groupBox_customizePlot.isHidden())
+		if self.groupBox_customizePlot.isHidden():
+			self.pushButton_showFigCustomization.setText("&Options>>")
+		else :
+			self.pushButton_showFigCustomization.setText("&<<Hide")
 	def potSetPlotScope(self):
 		""" Sets plot type and displays required input properties for that scope """
 		if (self.radioButton_StreamLines.isChecked()):
@@ -514,6 +524,36 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		self.graphicWidget.fig.canvas.draw()
 		self.statusbar.showMessage("Done :)")
 		self.graphicWidget.item.axis(self.axisRange)
+
+	def setCustomAxisRange(self):
+		""" Set the axis range as rendered """
+		Xmin = self.doubleSpinBox_figXmin.value()
+		Xmax = self.doubleSpinBox_figXmax.value()
+		Ymin = self.doubleSpinBox_figYmin.value()
+		Ymax = self.doubleSpinBox_figYmax.value()
+		self.graphicWidget.item.axis(array([Xmin, Xmax, Ymin, Ymax]))
+		self.graphicWidget.fig.canvas.draw()
+
+	def potClearAllPotElements(self):
+		""" Removes all potential elements """
+		self.potLibrary.elements = []
+		for index in range(5):
+			childCount =  self.treeWidget_potElements.topLevelItem(index).childCount()
+			for childNo in range(childCount):
+				child = self.treeWidget_potElements.topLevelItem(index).child(childNo)
+				del self.elementTreeItemDict[child]
+				self.treeWidget_potElements.removeItemWidget(child, 0)
+		self.statusbar.showMessage("Removed all elements")
+
+	def setDefaultAxisRange(self):
+		""" Set the axis range Default - based on potential elements and
+		particles """
+		if self.scope == 'potentialFlows':
+			self.potResizeGraphicWindow()
+			self.potAutoscaleAxis()
+		elif self.scope == 'cfd':
+			self.graphicWidget.item.axis(array(self.axisRange))
+		self.graphicWidget.fig.canvas.draw()
 
 	def timerEvent(self, event, dt = 0.01):
 		""" Supposed to update the plot """
