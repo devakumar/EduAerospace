@@ -132,6 +132,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ (" + str(X) + ", " + str(Y) +")"], 0)
 			self.treeWidget_potElements.topLevelItem(0).addChild(self.treeWidgetItem)
+			self.elementInfo['strength'] = -1*self.elementInfo['strength']
 		elif self.radioButton_Sink.isChecked():
 			self.elementInfo['type'] = 'sink'
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
@@ -143,7 +144,6 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ (" + str(X) + ", " + str(Y) +")"], 2)
 			self.treeWidget_potElements.topLevelItem(2).addChild(self.treeWidgetItem)
-			self.elementInfo['strength'] = -1*self.elementInfo['strength']
 		elif self.radioButton_UniformFlow.isChecked():
 			self.elementInfo['type'] = 'uniformFlow'
 			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle_OR_X.value()
