@@ -1,4 +1,4 @@
-from math import sin, cos, pi, atan2
+from math import sin, cos, pi, atan2, log
 from numpy import exp, array
 
 class particle(object):
@@ -14,7 +14,7 @@ class particle(object):
 		elif integType == 'rk2' :
 			self.pos = self.pos + 0.5*(self.k1 + self.k2)
 		else :
-			raise NameError("Integration type unknown")
+			raise NameError("Integration type" + str(integType) + " unknown")
 		self.history.append(self.pos)
 
 class potElement(object):
@@ -45,11 +45,11 @@ class potElement(object):
 		# Numerical tolerance values - Distance after or below which numerical
 		# singularities are to be treated explicitly. APPROXIMATION
 		if (self._Type == 'source') or (self._Type == 'sink'):
-			self.__tolerance = 0.5
+			self.__tolerance = 0.15
 		elif self._Type == 'doublet':
 			self.__tolerance = 0.5
 		elif self._Type == 'vortex':
-			self.__tolerance = 0.5
+			self.__tolerance = 0.25
 		else :
 			self.__tolerance = 0.0
 
@@ -73,13 +73,41 @@ class potElement(object):
 			else :
 				return self.strength*(x**2 - y**2 +1j*2*x*y)/(2.0*pi*r**4)
 		elif self._Type == 'vortex':
-			if abs (pos - self.pos) > 1e-4 :
+			if abs (pos - self.pos) > self.__tolerance :
 				temp = -1j*self.strength/(2.0*pi*(pos - self.pos))
 				return temp.real -1j*temp.imag
 			else :
 				theta = atan2(pos.imag - self.pos.imag, pos.real - self.pos.real)
 				temp = -1j*self.strength*exp(1j*theta)/(2.0*pi*self.__tolerance)
 				return temp.real -1j*temp.imag
+		else :
+			raise NameError('element type', self._Type, 'unknown')
+
+	def streamFunctionValueAt(self, pos = 0.0 + 0.0j):
+		if self._Type == 'uniformFlow':
+			theta = atan2(pos.imag, pos.real)
+			return self.strength*cos(self.flowAngle)*pos.imag
+		elif (self._Type == 'source') or (self._Type == 'sink'):
+			theta = atan2(pos.imag - self.pos.imag, pos.real - self.pos.real)
+			return self.strength*theta
+		elif self._Type == 'doublet':
+			x = pos.real - self.pos.real
+			y = pos.imag - self.pos.imag
+			r = abs(pos - self.pos)
+			theta = atan2(pos.imag - self.pos.imag, pos.real - self.pos.real)
+			if ( ((cmp(self.strength, 0) and cmp(pos.real, self.pos.real)) or \
+					(cmp(0, self.strength) and cmp(self.pos.real, pos.real))) and (r < self.__tolerance)) :
+				return -self.strength*sin(theta)/self.__tolerance
+			else :
+				return -self.strength*sin(theta)/r
+		elif self._Type == 'vortex':
+			x = pos.real - self.pos.real
+			y = pos.imag - self.pos.imag
+			r = abs(pos - self.pos)
+			if r > self.__tolerance :
+				return self.strength*r*log(r)/(2.0*pi*self.__tolerance)
+			else :
+				return self.strength*log(r)/(2.0*pi)
 		else :
 			raise NameError('element type', self._Type, 'unknown')
 
@@ -123,6 +151,12 @@ class potentialLibrary(object):
 		library """
 		velList = [element.inducedVelocityAt(pos) for element in self.elements]
 		return sum(velList)
+
+	def streamFunctionAt(self, pos):
+		""" Returns the velocity at pos due to all the elements present in the
+		library """
+		streamFuncValueList = [element.streamFunctionValueAt(pos) for element in self.elements]
+		return sum(streamFuncValueList)
 
 	def getRange(self):
 		""" Gives x and y limits of the elements. Returns [xMin, xMax, yMin, yMax] """

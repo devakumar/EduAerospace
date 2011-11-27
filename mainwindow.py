@@ -5,10 +5,11 @@ import sys
 import re
 import time
 from math import *
-from pylab import linspace
+from pylab import linspace, array
 from matplotlib.backends.backend_qt4agg \
 		import NavigationToolbar2QTAgg as NavigationToolbar
 from matplotlib.patches import FancyArrowPatch
+import numpy as np
 # PyQt4 libraries
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -132,6 +133,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 			self.treeWidgetItem = QTreeWidgetItem([str(self.elementInfo['strength']) +\
 					"@ (" + str(X) + ", " + str(Y) +")"], 2)
 			self.treeWidget_potElements.topLevelItem(2).addChild(self.treeWidgetItem)
+			self.elementInfo['strength'] = -1*self.elementInfo['strength']
 		elif self.radioButton_UniformFlow.isChecked():
 			self.elementInfo['type'] = 'uniformFlow'
 			self.elementInfo['angle'] = self.doubleSpinBox_FlowAngle_OR_X.value()
@@ -236,23 +238,28 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		if self.potStreakParticles != []:
 			self.graphicWidget.clearStreakParticles() # To clear streak line in the plot window
 		if (self.potLibrary.elements != []):
-			self.pushButton_toggleSimulation.setEnabled(True)
-			self.pushButton_toggleSimulation.setText("&Pause")
-			self.count = 0
 			if (self.plotType == 'pathLines'):
 				if self.potStreakParticles == [] :
 					self.potAddDefaultStreakParticles()
+				# Start simulation in real time	
+				self.potTime = 0.0
+				self.pushButton_toggleSimulation.setEnabled(True)
+				self.pushButton_toggleSimulation.setText("&Pause")
+				self.count = 0
+				self.timerEvent(None)
+				self.statusbar.showMessage("Simulating ...")
+				self.timer = self.startTimer(0.001)
 			elif (self.plotType == 'velMagnitude') :
-				self.statusbar.showMessage("Plotting the stream lines. This may take some time...")
+				self.pushButton_toggleSimulation.setEnabled(False)
 				self.potAddStreamParticles()
 			elif (self.plotType == 'streamLines') :
+				self.statusbar.showMessage("Plotting the stream lines...This may take some time") # This is not being shown while execution - BUGGG
+				self.pushButton_toggleSimulation.setEnabled(False)
+				self.pushButton_toggleSimulation.setText("&Play")
 				self.potPlotStreamLines()
+			else :
+				raise NameError("Unknown plotType")
 
-			# Start simulation in real time	
-			self.timerEvent(None)
-			self.potTime = 0.0
-			self.statusbar.showMessage("Simulating ...")
-			self.timer = self.startTimer(0.001)
 		else :
 			self.statusbar.showMessage("No potential flow elements found. You can add them from the potential flows input box")
 
@@ -272,7 +279,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potAutoscaleAxis(self):
 		""" To set auto scale on if axis limits are exceeded"""
-		if self.plotType == "pathLines" and self.potStreakParticles != []:
+		if self.plotType != 'velMagnitude' and self.potStreakParticles != []:
 			xRange = [item.pos.real for item in self.potStreakParticles]
 			yRange = [item.pos.imag for item in self.potStreakParticles]
 			if min(xRange) < self.axisRange[0]: self.axisRange += array([min(xRange) - self.axisRange[0], 0, 0, 0])
@@ -374,7 +381,7 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 		""" Removes all streak particles """
 		self.potStreakParticles = []
 		self.potResizeGraphicWindow()
-		self.clearPlot()
+		#self.clearPlot()
 		self.graphicWidget.fig.canvas.draw()
 	
 	def clearPlot(self):
@@ -488,7 +495,25 @@ class MainWindow(QMainWindow, ui_mainwindow.Ui_MainWindow):
 
 	def potPlotStreamLines(self):
 		""" Plot stream lines """
-		pass
+		self.axisRange = array(self.graphicWidget.item.axis())
+		noOfParticlesAtX = int(self.axisRange[3] - self.axisRange[2])*30
+		noOfParticlesAtY = int(self.axisRange[1] - self.axisRange[0])*20
+		self.potStreakParticles = [particle(x, y) for x in linspace(self.axisRange[1], self.axisRange[0], \
+				noOfParticlesAtY) for y in linspace(self.axisRange[2]+0.1, self.axisRange[3]-0.1, noOfParticlesAtX)]
+		velocities = array([self.potLibrary.streamFunctionAt(item.pos) for item in self.potStreakParticles])
+		v = np.arange(min(velocities), max(velocities), 0.1)
+		x = array([item.pos.real for item in self.potStreakParticles])
+		y = array([item.pos.imag for item in self.potStreakParticles])
+		x = x.reshape(noOfParticlesAtY, noOfParticlesAtX)
+		y = y.reshape(noOfParticlesAtY, noOfParticlesAtX)
+		velocities = velocities.reshape(noOfParticlesAtY, noOfParticlesAtX)
+		self.graphicWidget.item.contour(x, y, velocities)
+		#self.graphicWidget.item.colorbar()
+		self.graphicWidget.item.axis('equal')
+		self.potStreakParticles = []
+		self.graphicWidget.fig.canvas.draw()
+		self.statusbar.showMessage("Done :)")
+		self.graphicWidget.item.axis(self.axisRange)
 
 	def timerEvent(self, event, dt = 0.01):
 		""" Supposed to update the plot """
